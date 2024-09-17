@@ -15,9 +15,9 @@ class Background extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return const Stack(
       children: [
-        _BackgroundBox(),
+        // _BackgroundBox(),
         // Purple gradient
         // Container(
         //   decoration: boxDecoration,

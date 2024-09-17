@@ -9,6 +9,17 @@ class MenuScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Facturación"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                // Provider.of<AuthService>(context, listen: false).logout();
+                // Navigator.pushReplacementNamed(context, 'login');
+              },
+              icon: const Icon(
+                Icons.login_outlined,
+                color: Colors.white,
+              ))
+        ],
       ),
       body: const Stack(
         children: [

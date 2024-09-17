@@ -14,6 +14,8 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData.light().copyWith(
       // Color primario
       primaryColor: primary,
+      // Scaffold Theme
+      scaffoldBackgroundColor: Colors.white,
       // AppBar Theme
       appBarTheme: const AppBarTheme(
         elevation: 0,
@@ -21,6 +23,7 @@ class AppTheme {
         backgroundColor: primary,
         toolbarTextStyle: TextStyle(color: Colors.white),
         titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       // TextButton Theme
       textButtonTheme: TextButtonThemeData(
@@ -43,14 +46,14 @@ class AppTheme {
       ),
       // Input Decoration Theme
       inputDecorationTheme: const InputDecorationTheme(
-        floatingLabelStyle: TextStyle(color: Colors.green),
+        floatingLabelStyle: TextStyle(color: primary),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.green),
+          borderSide: BorderSide(color: primary),
           borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.green),
+          borderSide: BorderSide(color: primary),
           borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
