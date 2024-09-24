@@ -1,18 +1,35 @@
-import 'package:facturacion/src/themes/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:facturacion/src/themes/theme.dart';
+import 'package:facturacion/src/models/models.dart' show Usuario, Invoice;
+import 'package:facturacion/src/services/services.dart'
+    show UsuarioService, InvoiceService;
 
 class UserCardInvoiceInfo extends StatelessWidget {
-  final bool hasDebt;
+  final Usuario usuario;
+  final UsuarioService service;
 
   const UserCardInvoiceInfo({
     super.key,
-    required this.hasDebt,
+    required this.usuario,
+    required this.service,
   });
 
   @override
   Widget build(BuildContext context) {
+    final invoiceService = Provider.of<InvoiceService>(context);
     return InkWell(
       onTap: () {
+        service.selectedUsuario = usuario.copy();
+        invoiceService.selectedInvoice = Invoice(
+          readDate: '',
+          measured: '',
+          price: '',
+          total: '',
+          status: 'D',
+          employee: 0,
+          usuario: usuario.id!,
+        );
         Navigator.pushNamed(context, 'invoiceform');
       },
       borderRadius: BorderRadius.circular(20),
@@ -24,7 +41,13 @@ class UserCardInvoiceInfo extends StatelessWidget {
               const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 10),
           width: double.infinity,
           decoration: _createCardShape(),
-          child: _UserInfo(hasDebt: hasDebt),
+          child: _UserInfo(
+            hasDebt: usuario.hasDebt!,
+            code: usuario.id.toString(),
+            family: usuario.family,
+            addres: usuario.address,
+            phone: usuario.phone,
+          ),
         ),
       ),
     );
@@ -45,10 +68,18 @@ class UserCardInvoiceInfo extends StatelessWidget {
 
 class _UserInfo extends StatelessWidget {
   final bool hasDebt;
+  final String code;
+  final String family;
+  final String addres;
+  final String phone;
 
   const _UserInfo({
     super.key,
     required this.hasDebt,
+    required this.code,
+    required this.family,
+    required this.addres,
+    required this.phone,
   });
 
   @override
@@ -56,38 +87,53 @@ class _UserInfo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // _rowInfo(Icons.password_outlined, "A9865456"),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.password_outlined,
                   color: AppTheme.primary,
                   size: 25,
                 ),
-                SizedBox(width: 10),
-                Text("M9865456",
+                const SizedBox(width: 10),
+                Text(code,
                     softWrap: true,
                     overflow: TextOverflow.visible,
-                    style: TextStyle(fontSize: 16)),
+                    style: const TextStyle(fontSize: 16)),
               ],
             ),
-            !hasDebt
-                ? const Icon(Icons.check_circle_outline_outlined,
-                    color: AppTheme.success, size: 30)
-                : const Icon(Icons.money_off_csred_outlined,
-                    color: AppTheme.warning, size: 30),
+            Row(
+              children: [
+                !hasDebt
+                    ? const Icon(Icons.check_circle_outline_outlined,
+                        color: AppTheme.success, size: 30)
+                    : const Icon(Icons.monetization_on_outlined,
+                        color: AppTheme.warning, size: 30),
+                !hasDebt
+                    ? const Text("",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.success))
+                    : const Text(
+                        "Deuda",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.warning),
+                      ),
+              ],
+            )
           ],
         ),
         const SizedBox(height: 5),
-        _rowInfo(Icons.family_restroom_outlined, "Fam. Perez Guevara"),
+        _rowInfo(Icons.family_restroom_outlined, family),
         const SizedBox(height: 5),
-        _rowInfo(Icons.house,
-            "Calle Guadalupe esq. juan pablo Ise gundo fi tercero #90"),
+        _rowInfo(Icons.house, addres),
         const SizedBox(height: 5),
-        _rowInfo(Icons.phone, "65381838"),
+        _rowInfo(Icons.phone, phone),
         const SizedBox(height: 5),
         // const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         //   Icon(Icons.check, color: AppTheme.success, size: 25),

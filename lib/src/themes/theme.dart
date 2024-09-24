@@ -12,56 +12,68 @@ class AppTheme {
   static const Color error = Color.fromRGBO(255, 51, 51, 1);
 
   static final ThemeData lightTheme = ThemeData.light().copyWith(
-      // Color primario
-      primaryColor: primary,
-      // Scaffold Theme
-      scaffoldBackgroundColor: Colors.white,
-      // AppBar Theme
-      appBarTheme: const AppBarTheme(
+    // Color primario
+    primaryColor: primary,
+    // Scaffold Theme
+    scaffoldBackgroundColor: Colors.white,
+    // AppBar Theme
+    appBarTheme: const AppBarTheme(
+      elevation: 0,
+      centerTitle: true,
+      backgroundColor: primary,
+      toolbarTextStyle: TextStyle(color: Colors.white),
+      titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+      iconTheme: IconThemeData(color: Colors.white),
+    ),
+    // TextButton Theme
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: primary,
+      ),
+    ),
+    // Floating Action Button
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      backgroundColor: primary,
+      elevation: 5,
+    ),
+    // ElevatedButton Theme
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primary,
+        shape: const StadiumBorder(),
         elevation: 0,
-        centerTitle: true,
-        backgroundColor: primary,
-        toolbarTextStyle: TextStyle(color: Colors.white),
-        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
-        iconTheme: IconThemeData(color: Colors.white),
       ),
-      // TextButton Theme
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: primary,
-        ),
+    ),
+    // Input Decoration Theme
+    inputDecorationTheme: const InputDecorationTheme(
+      floatingLabelStyle: TextStyle(color: primary),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: primary),
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10), topRight: Radius.circular(10)),
       ),
-      // Floating Action Button
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: primary,
-        elevation: 5,
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: primary),
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10), topRight: Radius.circular(10)),
       ),
-      // ElevatedButton Theme
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primary,
-          shape: const StadiumBorder(),
-          elevation: 0,
-        ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(10), topRight: Radius.circular(10)),
       ),
-      // Input Decoration Theme
-      inputDecorationTheme: const InputDecorationTheme(
-        floatingLabelStyle: TextStyle(color: primary),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: primary),
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(10), topRight: Radius.circular(10)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: primary),
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(10), topRight: Radius.circular(10)),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(10), topRight: Radius.circular(10)),
-        ),
-      ));
+    ),
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: primary,
+      selectionColor: secondary,
+      selectionHandleColor: primary,
+    ),
+    tabBarTheme: const TabBarTheme(
+      indicatorColor: primary,
+      unselectedLabelColor: Colors.grey,
+      labelColor: primary,
+      // labelPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    ),
+  );
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
     // Color primario

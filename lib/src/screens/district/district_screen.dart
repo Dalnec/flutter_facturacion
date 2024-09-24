@@ -1,23 +1,29 @@
+import 'package:facturacion/src/models/distric.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:facturacion/src/themes/theme.dart';
+import 'package:facturacion/src/services/services.dart' show DistricService;
 
 class DistricScreen extends StatefulWidget {
   const DistricScreen({super.key});
 
   @override
-  _DistricScreenState createState() => _DistricScreenState();
+  State<DistricScreen> createState() => _DistricScreenState();
 }
 
 class _DistricScreenState extends State<DistricScreen> {
   bool _isEditing = false;
 
-  // Valores de los campos de ejemplo
-  String _districtName = 'OTB VILLA ESPERANZA';
-  String _representativeName = 'JAIME MAMANI CORONEL';
-  String _address = 'CALLES LOS CONQUISTADORES Y LOS PINOS SUR MZ. C LT. 2';
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final districService = Provider.of<DistricService>(context);
+    final distric = districService.distric;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Información General"),
@@ -26,6 +32,10 @@ class _DistricScreenState extends State<DistricScreen> {
           IconButton(
             icon: Icon(_isEditing ? Icons.save : Icons.edit),
             onPressed: () {
+              // Guardar los cambios
+              if (_isEditing) {
+                districService.updateDistric(distric);
+              }
               setState(() {
                 // Cambiar entre los modos de edición y vista
                 _isEditing = !_isEditing;
@@ -52,7 +62,7 @@ class _DistricScreenState extends State<DistricScreen> {
                   // Mostrar Text o TextFormField según el estado de edición
                   _isEditing
                       ? TextFormField(
-                          initialValue: _districtName,
+                          initialValue: distric.name,
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -65,11 +75,11 @@ class _DistricScreenState extends State<DistricScreen> {
                             ),
                           ),
                           onChanged: (value) {
-                            _districtName = value;
+                            distric.name = value;
                           },
                         )
                       : Text(
-                          _districtName,
+                          distric.name,
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -80,94 +90,101 @@ class _DistricScreenState extends State<DistricScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 5),
 
             // Sección de Representante
             _CardContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Representante',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.secondary,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _isEditing
-                      ? TextFormField(
-                          initialValue: _representativeName,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onChanged: (value) {
-                            _representativeName = value;
-                          },
-                        )
-                      : Text(
-                          _representativeName,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                ],
+              child: _FieldsInfo(
+                isEditing: _isEditing,
+                label: 'Representante',
+                value: distric.representative,
+                onChanged: (value) => distric.representative = value,
               ),
             ),
-            const SizedBox(height: 20),
 
             // Sección de Dirección
             _CardContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Dirección',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.secondary,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  _isEditing
-                      ? TextFormField(
-                          initialValue: _address,
-                          maxLines: 2,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onChanged: (value) {
-                            _address = value;
-                          },
-                        )
-                      : Text(
-                          _address,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                ],
+              child: _FieldsInfo(
+                isEditing: _isEditing,
+                label: 'Dirección',
+                value: distric.address,
+                onChanged: (value) => distric.address = value,
+              ),
+            ),
+            _CardContainer(
+              child: _FieldsInfo(
+                isEditing: _isEditing,
+                label: 'Celular',
+                value: distric.phone,
+                onChanged: (value) => distric.phone = value,
+              ),
+            ),
+            _CardContainer(
+              child: _FieldsInfo(
+                isEditing: _isEditing,
+                label: 'Correo Electrónico',
+                value: distric.email,
+                onChanged: (value) => distric.email = value,
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _FieldsInfo extends StatelessWidget {
+  const _FieldsInfo({
+    super.key,
+    required bool isEditing,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  }) : _isEditing = isEditing;
+
+  final bool _isEditing;
+  final String label;
+  final String value;
+  final Function onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.secondary,
+          ),
+        ),
+        const SizedBox(height: 5),
+        _isEditing
+            ? TextFormField(
+                initialValue: value,
+                maxLines: 2,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                onChanged: (value) => onChanged(value),
+              )
+            : Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+      ],
     );
   }
 }
@@ -196,7 +213,7 @@ class _CardContainer extends StatelessWidget {
           BoxShadow(
             color: Colors.grey,
             blurRadius: 15,
-            offset: Offset(8, 6),
+            offset: Offset(0, 3),
           ),
         ],
       );

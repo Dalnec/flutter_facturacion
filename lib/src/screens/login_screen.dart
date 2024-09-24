@@ -1,4 +1,5 @@
 import 'package:facturacion/src/providers/login_form_provider.dart';
+import 'package:facturacion/src/services/services.dart';
 import 'package:facturacion/src/themes/theme.dart';
 import 'package:facturacion/src/ui/input_decoration.dart';
 import 'package:facturacion/src/widgets/widgets.dart';
@@ -58,23 +59,39 @@ class _LoginForm extends StatelessWidget {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
+              // TextFormField(
+              //   autocorrect: false,
+              //   keyboardType: TextInputType.emailAddress,
+              //   decoration: InputDecorations.authInputDecoration(
+              //     hintText: 'user@example.com',
+              //     labelText: 'Correo Electronico',
+              //     prefixIcon: Icons.alternate_email_sharp,
+              //   ),
+              //   onChanged: (value) => loginForm.email = value,
+              //   validator: (value) {
+              //     String pattern =
+              //         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+              //     RegExp regExp = RegExp(pattern);
+              //     return regExp.hasMatch(value ?? '')
+              //         ? null
+              //         : 'Email no Valido';
+              //   },
+              // ),
               TextFormField(
                 autocorrect: false,
-                keyboardType: TextInputType.emailAddress,
+                keyboardType: TextInputType.text,
                 decoration: InputDecorations.authInputDecoration(
-                  hintText: 'user@example.com',
-                  labelText: 'Correo Electronico',
+                  hintText: 'Mi Usuario',
+                  labelText: 'Usuario',
                   prefixIcon: Icons.alternate_email_sharp,
                 ),
                 onChanged: (value) => loginForm.email = value,
                 validator: (value) {
-                  String pattern =
-                      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-
-                  RegExp regExp = RegExp(pattern);
-                  return regExp.hasMatch(value ?? '')
-                      ? null
-                      : 'Email no Valido';
+                  if (value == null) return 'Campo requerido';
+                  return value.length < 6
+                      ? 'Debe ser mayor a 6 caracteres'
+                      : null;
                 },
               ),
               const SizedBox(height: 30),
@@ -98,25 +115,22 @@ class _LoginForm extends StatelessWidget {
                 onPressed: loginForm.isLoading
                     ? null
                     : () async {
-                        // FocusScope.of(context).unfocus();
-                        // final authService =
-                        //     Provider.of<AuthService>(context, listen: false);
-                        // if (!loginForm.isValidForm()) return;
+                        FocusScope.of(context).unfocus();
+                        final authService =
+                            Provider.of<AuthService>(context, listen: false);
+                        if (!loginForm.isValidForm()) return;
 
-                        // loginForm.isLoading = true;
+                        loginForm.isLoading = true;
 
-                        // final String? errorMessage = await authService.login(
-                        //     loginForm.email, loginForm.password);
+                        final String? errorMessage = await authService.login(
+                            loginForm.email, loginForm.password);
 
-                        // if (errorMessage == null) {
-                        //   Navigator.pushReplacementNamed(context, 'home');
-                        // } else {
-                        //   NotificationsService.showSnackbar(errorMessage);
-                        //   loginForm.isLoading = false;
-                        // }
-                        // Navigator.pushReplacementNamed(context, 'menu');
-                        Navigator.pushNamed(context, 'menu');
-                        loginForm.isLoading = false;
+                        if (errorMessage == null) {
+                          Navigator.pushReplacementNamed(context, 'menu');
+                        } else {
+                          NotificationsService.showSnackbar(errorMessage);
+                          loginForm.isLoading = false;
+                        }
                       },
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

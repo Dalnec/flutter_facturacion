@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:facturacion/src/services/services.dart';
 import 'package:facturacion/src/widgets/widgets.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -12,8 +14,8 @@ class MenuScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                // Provider.of<AuthService>(context, listen: false).logout();
-                // Navigator.pushReplacementNamed(context, 'login');
+                Provider.of<AuthService>(context, listen: false).logout();
+                Navigator.pushReplacementNamed(context, 'login');
               },
               icon: const Icon(
                 Icons.login_outlined,
