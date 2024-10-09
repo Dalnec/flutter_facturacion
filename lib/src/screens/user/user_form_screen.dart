@@ -163,7 +163,11 @@ class _UserFormProviderBody extends StatelessWidget {
                     }
                     print('Formulario válido! Wiiii!');
                     await usuarioService.saveOrCreateUsuario(usuario);
-                    Navigator.pushReplacementNamed(context, 'user');
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      'user',
+                      (route) => route.isFirst,
+                    );
                   },
                 )
               ],

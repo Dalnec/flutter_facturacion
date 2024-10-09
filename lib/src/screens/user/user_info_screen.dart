@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 import 'package:facturacion/src/themes/theme.dart';
+import 'package:facturacion/src/services/services.dart' show AuthService;
 import 'package:facturacion/src/widgets/widgets.dart'
-    show BarChartWidget, PaginatedDataTableWidget;
+    show BarChartWidget, InvoiceDataTable;
 
 class UserInfoScreen extends StatelessWidget {
   const UserInfoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> datos = List.generate(
-      100,
-      (index) => {
-        'id': index + 1,
-        'name': 'Nombre $index',
-        'age': 20 + index % 10,
-      },
-    );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Información de Usuario'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Provider.of<AuthService>(context, listen: false).logout();
+                Navigator.pushReplacementNamed(context, 'login');
+              },
+              icon: const Icon(
+                Icons.login_outlined,
+                color: Colors.white,
+              ))
+        ],
       ),
       body: ListView(
         children: [
           const SizedBox(height: 5),
           const Text(
               textAlign: TextAlign.center,
-              "Ultimos Pagos:",
+              "Consumo Mensual:",
               style: TextStyle(
                 color: AppTheme.primary,
                 fontSize: 20,
@@ -42,13 +47,14 @@ class UserInfoScreen extends StatelessWidget {
               ),
             ),
           ),
-          const Text(
-              textAlign: TextAlign.center,
-              "Lista de Recibos:",
-              style: TextStyle(
-                color: AppTheme.primary,
-                fontSize: 20,
-              )),
+          // const Text(
+          //     textAlign: TextAlign.center,
+          //     "Lista de Recibos:",
+          //     style: TextStyle(
+          //       color: AppTheme.primary,
+          //       fontSize: 20,
+          //     )),
+          const InvoiceDataTable(),
           // Padding(
           //   padding: const EdgeInsets.all(8.0),
           //   child: _CardContainer(

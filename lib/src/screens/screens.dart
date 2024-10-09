@@ -1,3 +1,4 @@
+export 'package:facturacion/src/screens/puchase/purchase_form_screen.dart';
 export 'package:facturacion/src/screens/check_auth_screen.dart';
 export 'package:facturacion/src/screens/district/district_screen.dart';
 export 'package:facturacion/src/screens/invoice/form_invoice_screen.dart';

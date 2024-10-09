@@ -51,6 +51,20 @@ class CardTable extends StatelessWidget {
             route: 'userinfo',
           ),
         ]),
+        TableRow(children: [
+          _SingleCard(
+            color: AppTheme.secondary,
+            icon: Icons.water_damage_outlined,
+            text: 'Test',
+            route: 'test',
+          ),
+          _SingleCard(
+            color: AppTheme.secondary,
+            icon: Icons.water_damage_outlined,
+            text: 'Test',
+            route: 'test',
+          ),
+        ]),
       ],
     );
   }

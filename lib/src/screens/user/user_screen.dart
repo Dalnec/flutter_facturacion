@@ -177,105 +177,109 @@ class _UserScreenState extends State<UserScreen> {
       appBar: AppBar(
         title: const Text("Usuarios"),
       ),
-      body: PopScope(
-        onPopInvokedWithResult: (didPop, result) {
-          usuarioService.getUsuarios('');
-          // _searchController.clear();
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Campo de texto para la búsqueda
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        prefixIcon: _searchController.text.isEmpty
-                            ? null
-                            : IconButton(
-                                icon: const Icon(Icons.clear),
+      body: usuarioService.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : PopScope(
+              onPopInvokedWithResult: (didPop, result) {
+                usuarioService.getUsuarios('');
+                // _searchController.clear();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    // Campo de texto para la búsqueda
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              prefixIcon: _searchController.text.isEmpty
+                                  ? null
+                                  : IconButton(
+                                      icon: const Icon(Icons.clear),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        usuarioService.getUsuarios('');
+                                        setState(() {});
+                                      },
+                                    ),
+                              hintText: 'Buscar...',
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.search),
                                 onPressed: () {
-                                  _searchController.clear();
-                                  usuarioService.getUsuarios('');
-                                  setState(() {});
+                                  _scrollController.jumpTo(0);
+                                  usuarioService
+                                      .getUsuarios(_searchController.text);
                                 },
                               ),
-                        hintText: 'Buscar...',
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.search),
+                            ),
+                            onSubmitted: (value) {
+                              _scrollController.jumpTo(0);
+                              usuarioService
+                                  .getUsuarios(_searchController.text);
+                            },
+                          ),
+                        ),
+                        IconButton(
                           onPressed: () {
-                            _scrollController.jumpTo(0);
-                            usuarioService.getUsuarios(_searchController.text);
+                            usuarioService.selectedUsuario = Usuario(
+                              ci: '',
+                              names: '',
+                              lastnames: '',
+                              gender: 'M',
+                              phone: '',
+                              email: '',
+                              family: '',
+                              address: '',
+                              status: 'A',
+                              employee: 0,
+                            );
+                            Navigator.pushNamed(context, 'userform');
+                          },
+                          icon: const Icon(Icons.person_add),
+                          iconSize: 30,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      // ListView con ScrollController para detectar el desplazamiento
+                      child: RefreshIndicator(
+                        color: AppTheme.primary,
+                        backgroundColor: Colors.white.withOpacity(0.7),
+                        onRefresh: () {
+                          return usuarioService.getUsuarios('');
+                        },
+                        child: ListView.builder(
+                          // Asignar el controlador de scroll
+                          controller: _scrollController,
+                          // Añadir 1 si está cargando más
+                          itemCount: usuarioService.usuarios.length +
+                              (_isLoadingMore ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index == usuarioService.usuarios.length) {
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16),
+                                child: Center(
+                                    child: CircularProgressIndicator(
+                                  color: AppTheme.primary,
+                                )),
+                              );
+                            }
+                            return UserCardInfo(
+                              usuario: usuarioService.usuarios[index],
+                              service: usuarioService,
+                            );
                           },
                         ),
                       ),
-                      onSubmitted: (value) {
-                        _scrollController.jumpTo(0);
-                        usuarioService.getUsuarios(_searchController.text);
-                      },
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      usuarioService.selectedUsuario = Usuario(
-                        ci: '',
-                        names: '',
-                        lastnames: '',
-                        gender: 'M',
-                        phone: '',
-                        email: '',
-                        family: '',
-                        address: '',
-                        status: 'A',
-                        employee: 0,
-                      );
-                      Navigator.pushNamed(context, 'userform');
-                    },
-                    icon: const Icon(Icons.person_add),
-                    iconSize: 30,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                // ListView con ScrollController para detectar el desplazamiento
-                child: RefreshIndicator(
-                  color: AppTheme.primary,
-                  backgroundColor: Colors.white.withOpacity(0.7),
-                  onRefresh: () {
-                    return usuarioService.getUsuarios('');
-                  },
-                  child: ListView.builder(
-                    // Asignar el controlador de scroll
-                    controller: _scrollController,
-                    // Añadir 1 si está cargando más
-                    itemCount: usuarioService.usuarios.length +
-                        (_isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == usuarioService.usuarios.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(
-                              child: CircularProgressIndicator(
-                            color: AppTheme.primary,
-                          )),
-                        );
-                      }
-                      return UserCardInfo(
-                        usuario: usuarioService.usuarios[index],
-                        service: usuarioService,
-                      );
-                    },
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

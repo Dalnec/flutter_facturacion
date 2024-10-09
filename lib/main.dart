@@ -1,3 +1,4 @@
+import 'package:facturacion/src/screens/test_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,9 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (_) => PurchaseService(),
+        ),
         ChangeNotifierProvider(
           create: (_) => MonitoringService(),
         ),
@@ -43,9 +47,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Facturacion App',
-      initialRoute: 'ckeckAuth',
+      initialRoute: 'checkAuth',
       routes: {
-        'ckeckAuth': (context) => const CheckAuthScreen(),
+        'checkAuth': (context) => const CheckAuthScreen(),
         'login': (context) => const LoginScreen(),
         'menu': (context) => const MenuScreen(),
         'user': (context) => const UserScreen(),
@@ -56,6 +60,8 @@ class MyApp extends StatelessWidget {
         'monitoring': (context) => const MonitoringScreen(),
         'district': (context) => const DistricScreen(),
         'purchase': (context) => const PurchaseScreen(),
+        'purchaseform': (context) => const PurchaseFormScreen(),
+        'test': (context) => const TestScreen(),
       },
       scaffoldMessengerKey: NotificationsService.messengerKey,
       theme: AppTheme.lightTheme,

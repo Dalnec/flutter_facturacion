@@ -126,7 +126,12 @@ class _LoginForm extends StatelessWidget {
                             loginForm.email, loginForm.password);
 
                         if (errorMessage == null) {
-                          Navigator.pushReplacementNamed(context, 'menu');
+                          if (authService.user['profile_description'] ==
+                              'USUARIO') {
+                            Navigator.pushReplacementNamed(context, 'userinfo');
+                          } else {
+                            Navigator.pushReplacementNamed(context, 'menu');
+                          }
                         } else {
                           NotificationsService.showSnackbar(errorMessage);
                           loginForm.isLoading = false;

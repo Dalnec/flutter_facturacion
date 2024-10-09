@@ -119,6 +119,11 @@ class FormInvoiceScreen extends StatelessWidget {
                           if (newInvoice != null) {
                             usuarioService.changeStatus(newInvoice.usuario);
                             Navigator.of(context).pop();
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              'invoice',
+                              (route) => route.isFirst,
+                            );
                           }
                         },
                         child: const Text('Confirmar',

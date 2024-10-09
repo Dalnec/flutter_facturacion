@@ -5,8 +5,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class InvoiceService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.3:8000';
+  final String _baseUrl = 'facturacionapi.tsi.pe';
 
+  InvoiceResponse response = InvoiceResponse(count: 0, results: []);
   List<Invoice> invoices = [];
   late Invoice selectedInvoice;
   bool isLoading = true;
@@ -81,7 +82,7 @@ class InvoiceService extends ChangeNotifier {
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/Invoice/', params);
+    final url = Uri.http(_baseUrl, '/api/invoice/', params);
     final resp = await http.get(url);
     final invoiceResponse = InvoiceResponse.fromJson(json.decode(resp.body));
     _count = invoiceResponse.count;
@@ -101,12 +102,28 @@ class InvoiceService extends ChangeNotifier {
     };
     if (_count > invoices.length) {
       // final url = Uri.https(_baseUrl, '/api/login/');
-      final url = Uri.http(_baseUrl, '/api/Invoice/', params);
+      final url = Uri.http(_baseUrl, '/api/invoice/', params);
       final resp = await http.get(url);
       final invoiceResponse = InvoiceResponse.fromJson(json.decode(resp.body));
       invoices = [...invoices, ...invoiceResponse.results];
 
       notifyListeners();
     }
+  }
+
+  Future getInvoicesResponse(String? search,
+      [int pageSize = 10, int page = 1]) async {
+    final Map<String, dynamic> params = {
+      'page_size': '$pageSize',
+      'page': '$page',
+      'search': search,
+    };
+
+    // final url = Uri.https(_baseUrl, '/api/login/');
+    final url = Uri.http(_baseUrl, '/api/invoice/', params);
+    final resp = await http.get(url);
+    response = InvoiceResponse.fromJson(json.decode(resp.body));
+    invoices = response.results;
+    notifyListeners();
   }
 }

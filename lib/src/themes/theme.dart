@@ -73,6 +73,20 @@ class AppTheme {
       labelColor: primary,
       // labelPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
     ),
+    // Circular Progress Indicator
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: primary,
+    ),
+    datePickerTheme: const DatePickerThemeData(
+      backgroundColor: Colors.white,
+      dayStyle: TextStyle(color: Colors.black),
+      surfaceTintColor: Colors.transparent,
+      headerBackgroundColor: primary,
+      headerForegroundColor: Colors.white,
+      todayBackgroundColor: WidgetStatePropertyAll(primary),
+      todayForegroundColor: WidgetStatePropertyAll(harp),
+      dayOverlayColor: WidgetStatePropertyAll(primary),
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith(

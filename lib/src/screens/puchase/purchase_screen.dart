@@ -1,14 +1,19 @@
+import 'package:facturacion/src/models/models.dart';
+import 'package:facturacion/src/services/services.dart';
 import 'package:facturacion/src/themes/theme.dart';
 import 'package:facturacion/src/widgets/widgets.dart'
-    show LineChartWidget, PaginatedDataTableWidget;
+    show LineChartWidget, PurchaseDataTable;
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 
 class PurchaseScreen extends StatelessWidget {
   const PurchaseScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final purchaseService =
+        Provider.of<PurchaseService>(context, listen: false);
     final List<Map<String, dynamic>> datos = List.generate(
       100,
       (index) => {
@@ -21,53 +26,118 @@ class PurchaseScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Compra de Agua'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                // Provider.of<AuthService>(context, listen: false).logout();
+                purchaseService.selectedPurchase = Purchase(
+                  purchasedDate: "",
+                  total: "",
+                  liters: "",
+                  price: "",
+                  employee: 0,
+                );
+                Navigator.pushNamed(context, 'purchaseform');
+              },
+              icon: const Icon(Icons.add_outlined, color: Colors.white))
+        ],
       ),
-      body: ListView(
-        children: [
-          const SizedBox(height: 5),
-          const Text(
-              textAlign: TextAlign.center,
-              "Ultimas Compras:",
-              style: TextStyle(
-                color: AppTheme.primary,
-                fontSize: 20,
-              )),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _CardContainer(
-              height: 230,
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            const SliverToBoxAdapter(
+                child: Text(
+                    textAlign: TextAlign.center,
+                    "Ultimas Compras:",
+                    style: TextStyle(
+                      color: AppTheme.primary,
+                      fontSize: 20,
+                    ))),
+            const SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                // child: LineChartExample(),
-                child: LineChartWidget(
-                  minX: 0,
-                  maxX: 11,
-                  minY: 0,
-                  maxY: 6,
-                  spots: _getSpots(),
-                  bottomTitleWidgets: _bottomTitleWidgets,
-                  leftTitleWidgets: _leftTitleWidgets,
+                padding: const EdgeInsets.all(8.0),
+                child: _CardContainer(
+                  height: 230,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                    // child: LineChartExample(),
+                    child: LineChartWidget(
+                      minX: 0,
+                      maxX: 11,
+                      minY: 0,
+                      maxY: 6,
+                      spots: [
+                        const FlSpot(0, 2),
+                        const FlSpot(0.5, 3),
+                        const FlSpot(1, 1),
+                        const FlSpot(2, 4),
+                        const FlSpot(3, 3),
+                        const FlSpot(4, 5),
+                        const FlSpot(5, 3),
+                        const FlSpot(6, 4),
+                        const FlSpot(7, 2),
+                        const FlSpot(8, 4),
+                        const FlSpot(9, 3),
+                        const FlSpot(10, 5),
+                        const FlSpot(11, 1),
+                      ],
+                      bottomTitleWidgets: _bottomTitleWidgets,
+                      leftTitleWidgets: _leftTitleWidgets,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          const Text(
-              textAlign: TextAlign.center,
-              "Lista de Compras:",
-              style: TextStyle(
-                color: AppTheme.primary,
-                fontSize: 20,
-              )),
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: _CardContainer(
-          //       child: PaginatedDataTableWidget(
-          //     source: _MyDataTableSource(datos),
-          //     headingRowColor: AppTheme.primary,
-          //     columns: _columnsDataTable(),
-          //   )),
-          // ),
-        ],
+            )
+          ];
+        },
+        body: const PurchaseDataTable(),
+        // children: [
+        //   const SizedBox(height: 5),
+        //   const Text(
+        //       textAlign: TextAlign.center,
+        //       "Ultimas Compras:",
+        //       style: TextStyle(
+        //         color: AppTheme.primary,
+        //         fontSize: 20,
+        //       )),
+        //   Padding(
+        //     padding: const EdgeInsets.all(8.0),
+        //     child: _CardContainer(
+        //       height: 230,
+        //       child: Padding(
+        //         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        //         // child: LineChartExample(),
+        //         child: LineChartWidget(
+        //           minX: 0,
+        //           maxX: 11,
+        //           minY: 0,
+        //           maxY: 6,
+        //           spots: _getSpots(),
+        //           bottomTitleWidgets: _bottomTitleWidgets,
+        //           leftTitleWidgets: _leftTitleWidgets,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        //   const Text(
+        //       textAlign: TextAlign.center,
+        //       "Lista de Compras:",
+        //       style: TextStyle(
+        //         color: AppTheme.primary,
+        //         fontSize: 20,
+        //       )),
+
+        //   // Padding(
+        //   //   padding: const EdgeInsets.all(8.0),
+        //   //   child: _CardContainer(
+        //   //       child: PaginatedDataTableWidget(
+        //   //     source: _MyDataTableSource(datos),
+        //   //     headingRowColor: AppTheme.primary,
+        //   //     columns: _columnsDataTable(),
+        //   //   )),
+        //   // ),
+        // ],
       ),
     );
   }

@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class MonitoringService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.3:8000';
+  final String _baseUrl = 'facturacionapi.tsi.pe';
 
   List<Monitoring> monitorings = [];
   MonitoringResponse response = MonitoringResponse(count: 0, results: []);

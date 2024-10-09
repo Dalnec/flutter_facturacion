@@ -283,7 +283,7 @@ class _InfiniteScrollDataTableState extends State<InfiniteScrollDataTable> {
   final int _pageSize = 10; // Tamaño de página
   bool _isLoading = false; // Indicador de carga
   bool _hasMoreData = true; // Verificar si hay más datos para cargar
-  List<Monitoring> _data = []; // Lista de datos cargados
+  final List<Monitoring> _data = []; // Lista de datos cargados
 
   final ScrollController _scrollController = ScrollController();
 
@@ -347,13 +347,8 @@ class _InfiniteScrollDataTableState extends State<InfiniteScrollDataTable> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Infinite Scroll DataTable'),
-      // ),
       body: _data.isEmpty && _isLoading
-          ? const Center(
-              child:
-                  CircularProgressIndicator()) // Mostrar un indicador de carga inicial
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               controller: _scrollController,
               child: Column(
@@ -362,7 +357,6 @@ class _InfiniteScrollDataTableState extends State<InfiniteScrollDataTable> {
                     headingRowHeight: 35,
                     columnSpacing: 30,
                     columns: const [
-                      DataColumn(label: Text('Cod')),
                       DataColumn(
                           label: Text('Fecha'),
                           headingRowAlignment: MainAxisAlignment.center),
@@ -370,31 +364,30 @@ class _InfiniteScrollDataTableState extends State<InfiniteScrollDataTable> {
                           label: Text('Medición'),
                           headingRowAlignment: MainAxisAlignment.center),
                       DataColumn(
-                          label: Text('Estado'),
+                          label: Text('Porcentaje'),
                           headingRowAlignment: MainAxisAlignment.center),
                     ],
                     rows: _data
                         .map((item) => DataRow(cells: [
                               DataCell(Text(
-                                item.id.toString(),
-                                textAlign: TextAlign.center,
-                              )),
-                              DataCell(Text(
                                 item.readDate,
-                                textAlign: TextAlign.center,
                               )),
-                              DataCell(Text(
-                                item.measured,
-                                textAlign: TextAlign.center,
+                              DataCell(Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  item.measured,
+                                ),
                               )),
-                              DataCell(Text(
-                                item.status,
-                                textAlign: TextAlign.center,
+                              DataCell(Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  item.status,
+                                ),
                               )),
                             ]))
                         .toList(),
                   ),
-                  if (_isLoading) // Indicador de carga mientras se cargan más datos
+                  if (_isLoading)
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 16.0),
                       child: Center(child: CircularProgressIndicator()),

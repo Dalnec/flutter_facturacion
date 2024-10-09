@@ -161,6 +161,14 @@ class _WaterTankLevelState extends State<WaterTankLevel>
                   child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
+                      Container(
+                        alignment: Alignment.center,
+                        child: Text(
+                          '${(currentWaterLevel * 100).toInt()}%',
+                          style: const TextStyle(
+                              fontSize: 40, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                       // Nivel de agua con movimiento de olas
                       AnimatedContainer(
                         duration: const Duration(seconds: 1),

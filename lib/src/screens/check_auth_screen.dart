@@ -29,14 +29,26 @@ class CheckAuthScreen extends StatelessWidget {
                   ));
             });
           } else {
-            Future.microtask(() {
-              Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (_, __, ___) => const MenuScreen(),
-                    transitionDuration: const Duration(seconds: 0),
-                  ));
-            });
+            List<String> parts = snapshot.data!.split(';');
+            if (parts[2] == 'USUARIO') {
+              Future.microtask(() {
+                Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => const UserInfoScreen(),
+                      transitionDuration: const Duration(seconds: 0),
+                    ));
+              });
+            } else {
+              Future.microtask(() {
+                Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (_, __, ___) => const MenuScreen(),
+                      transitionDuration: const Duration(seconds: 0),
+                    ));
+              });
+            }
           }
           return Container();
         },

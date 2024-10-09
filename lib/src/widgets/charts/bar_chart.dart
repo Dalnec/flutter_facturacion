@@ -82,8 +82,8 @@ class BarChartWidgetState extends State<BarChartWidget> {
         padding: const EdgeInsets.only(top: 16),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final barsSpace = 8.0 * constraints.maxWidth / 400;
-            final barsWidth = 10.0 * constraints.maxWidth / 400;
+            final barsSpace = 15.0 * constraints.maxWidth / 400;
+            final barsWidth = 15.0 * constraints.maxWidth / 400;
             return BarChart(
               BarChartData(
                 alignment: BarChartAlignment.center,

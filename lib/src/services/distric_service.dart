@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class DistricService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.3:8000';
+  final String _baseUrl = 'facturacionapi.tsi.pe';
 
   Distric distric = Distric(
     name: '',
