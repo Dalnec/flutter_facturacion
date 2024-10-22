@@ -8,7 +8,20 @@ class UsuarioService extends ChangeNotifier {
   final String _baseUrl = 'facturacionapi.tsi.pe';
 
   List<Usuario> usuarios = [];
-  late Usuario selectedUsuario;
+  late Usuario selectedUsuario = Usuario(
+    ci: "",
+    names: "",
+    lastnames: "",
+    gender: "",
+    phone: "",
+    email: "",
+    family: "",
+    address: "",
+    status: "",
+    employee: 0,
+    makeInvoice: false,
+  );
+  // late Usuario selectedUsuario;
   bool isLoading = true;
   bool isSaving = false;
   int _page = 0;
@@ -115,6 +128,8 @@ class UsuarioService extends ChangeNotifier {
   void changeStatus(int id) {
     final index = usuarios.indexWhere((element) => element.id == id);
     usuarios[index].hasDebt = true;
+    usuarios[index].makeInvoice = false;
+    selectedUsuario.makeInvoice = false;
     notifyListeners();
   }
 }

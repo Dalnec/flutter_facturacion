@@ -235,6 +235,7 @@ class _UserScreenState extends State<UserScreen> {
                               address: '',
                               status: 'A',
                               employee: 0,
+                              makeInvoice: false,
                             );
                             Navigator.pushNamed(context, 'userform');
                           },

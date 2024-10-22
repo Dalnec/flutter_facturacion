@@ -1,10 +1,10 @@
-import 'package:facturacion/src/screens/test_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:facturacion/src/services/services.dart';
 import 'package:facturacion/src/screens/screens.dart';
 import 'package:facturacion/src/themes/theme.dart';
+import 'package:facturacion/src/providers/bottom_navigation_bar_provider.dart';
 
 void main() => runApp(const AppState());
 
@@ -15,6 +15,9 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (_) => BottomNavigationProvider(),
+        ),
         ChangeNotifierProvider(
           create: (_) => PurchaseService(),
         ),
@@ -56,12 +59,11 @@ class MyApp extends StatelessWidget {
         'userform': (context) => const UserFormScreen(),
         'userinfo': (context) => const UserInfoScreen(),
         'invoice': (context) => const InvoiceScreen(),
-        'invoiceform': (context) => FormInvoiceScreen(),
+        'invoicehome': (context) => const HomeInvoiceScreen(),
         'monitoring': (context) => const MonitoringScreen(),
         'district': (context) => const DistricScreen(),
         'purchase': (context) => const PurchaseScreen(),
         'purchaseform': (context) => const PurchaseFormScreen(),
-        'test': (context) => const TestScreen(),
       },
       scaffoldMessengerKey: NotificationsService.messengerKey,
       theme: AppTheme.lightTheme,

@@ -6,5 +6,6 @@ export 'package:facturacion/src/models/monitoring_response.dart';
 export 'package:facturacion/src/models/monitoring.dart';
 export 'package:facturacion/src/models/purchase_response.dart';
 export 'package:facturacion/src/models/purchase.dart';
+export 'package:facturacion/src/models/ticket.dart';
 export 'package:facturacion/src/models/usuario_response.dart';
 export 'package:facturacion/src/models/usuario.dart';

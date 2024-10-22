@@ -8,6 +8,8 @@ class Monitoring {
   String measured;
   String status;
   String? observations;
+  String percentage;
+  bool isConnected;
 
   Monitoring({
     this.id,
@@ -17,6 +19,8 @@ class Monitoring {
     required this.measured,
     required this.status,
     this.observations,
+    required this.percentage,
+    required this.isConnected,
   });
 
   factory Monitoring.fromRawJson(String str) =>
@@ -32,6 +36,8 @@ class Monitoring {
         measured: json["measured"],
         status: json["status"],
         observations: json["observations"],
+        percentage: json["percentage"],
+        isConnected: json["isConnected"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -42,5 +48,7 @@ class Monitoring {
         "measured": measured,
         "status": status,
         "observations": observations,
+        "percentage": percentage,
+        "isConnected": isConnected,
       };
 }

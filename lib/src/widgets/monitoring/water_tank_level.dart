@@ -1,100 +1,9 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:facturacion/src/models/models.dart';
+import 'package:facturacion/src/services/services.dart';
 import 'package:flutter/material.dart';
-
-// class WaterTankLevel extends StatefulWidget {
-//   const WaterTankLevel({super.key});
-
-//   @override
-//   _WaterTankLevelState createState() => _WaterTankLevelState();
-// }
-
-// class _WaterTankLevelState extends State<WaterTankLevel> {
-//   final List<double> waterLevels = [
-//     0.1,
-//     0.5,
-//     0.8,
-//     0.3,
-//     0.7,
-//     1.0,
-//     0.4
-//   ]; // Lista de valores de nivel de agua (0.0 a 1.0)
-//   int currentIndex = 0;
-//   double currentWaterLevel = 0.0;
-//   late Timer _timer;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _startWaterLevelSimulation();
-//   }
-
-//   @override
-//   void dispose() {
-//     _timer.cancel();
-//     super.dispose();
-//   }
-
-//   // Función para simular el cambio de nivel de agua
-//   void _startWaterLevelSimulation() {
-//     _timer = Timer.periodic(const Duration(seconds: 2), (timer) {
-//       setState(() {
-//         currentWaterLevel = waterLevels[currentIndex];
-//         currentIndex = (currentIndex + 1) % waterLevels.length;
-//       });
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Monitoreo Tanque de Agua')),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.start,
-//           children: [
-//             const SizedBox(height: 20),
-//             // Contenedor para el tanque de agua
-//             Container(
-//               width: 170,
-//               height: 230,
-//               decoration: BoxDecoration(
-//                 border: Border.all(color: Colors.blueAccent, width: 3),
-//                 borderRadius: const BorderRadius.vertical(
-//                     bottom: Radius.circular(10), top: Radius.circular(5)),
-//               ),
-//               child: Stack(
-//                 alignment: Alignment.bottomCenter,
-//                 children: [
-//                   // Nivel de agua dentro del tanque
-//                   AnimatedContainer(
-//                     // Duración de la animación
-//                     duration: const Duration(seconds: 1),
-//                     width: double.infinity,
-//                     // Ajusta la altura según el nivel actual de agua
-//                     height: 300 * currentWaterLevel,
-//                     decoration: const BoxDecoration(
-//                       color: Colors.blueAccent,
-//                       borderRadius: BorderRadius.only(
-//                         bottomLeft: Radius.circular(10),
-//                         bottomRight: Radius.circular(10),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             const SizedBox(height: 20),
-//             Text(
-//               'Nivel de agua: ${(currentWaterLevel * 100).toStringAsFixed(0)}%',
-//               style: const TextStyle(fontSize: 20),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+import 'package:provider/provider.dart';
 
 class WaterTankLevel extends StatefulWidget {
   const WaterTankLevel({super.key});
@@ -106,18 +15,26 @@ class WaterTankLevel extends StatefulWidget {
 class _WaterTankLevelState extends State<WaterTankLevel>
     with SingleTickerProviderStateMixin {
   final List<double> waterLevels = [0.1, 0.5, 0.8, 0.3, 0.7, 1.0, 0.4];
-  int currentIndex = 0;
+  // int currentIndex = 0;
   double currentWaterLevel = 0.0;
   late Timer _timer;
   late AnimationController _waveController;
+  bool _isLoading = false;
+  Monitoring _dataCard = Monitoring(
+      readDate: '',
+      measured: '',
+      status: '',
+      percentage: '',
+      isConnected: false);
 
   @override
   void initState() {
     super.initState();
     _waveController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 3),
     )..repeat(); // Repetir la animación de las olas indefinidamente
+    _fetchData();
     _startWaterLevelSimulation();
   }
 
@@ -130,12 +47,29 @@ class _WaterTankLevelState extends State<WaterTankLevel>
 
   // Simulación de cambio de nivel de agua
   void _startWaterLevelSimulation() {
-    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      setState(() {
-        currentWaterLevel = waterLevels[currentIndex];
-        currentIndex = (currentIndex + 1) % waterLevels.length;
-      });
+    _timer = Timer.periodic(const Duration(seconds: 20), (timer) {
+      _fetchData();
+      // setState(() {
+      // currentWaterLevel = waterLevels[currentIndex];
+      // currentIndex = (currentIndex + 1) % waterLevels.length;
+      // });
+      // currentWaterLevel = double.parse(_dataCard.percentage) / 100;
+      // setState(() {});
+      print(currentWaterLevel);
     });
+  }
+
+  Future<void> _fetchData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final monitoringService =
+        Provider.of<MonitoringService>(context, listen: false);
+    await monitoringService.getLastReading();
+    _dataCard = monitoringService.lastMonitoring;
+    currentWaterLevel = double.parse(_dataCard.percentage) / 100;
+    _isLoading = false;
+    setState(() {});
   }
 
   @override
@@ -208,25 +142,12 @@ class _WaterTankLevelState extends State<WaterTankLevel>
               ],
             ),
           ),
-          InfoDisplay(currentWaterLevel: currentWaterLevel * 100)
-          // Column(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   crossAxisAlignment: CrossAxisAlignment.start,
-          //   children: [
-          //     Text(
-          //       'Nivel de Agua: ${(currentWaterLevel * 100).toStringAsFixed(0)}%',
-          //       style: const TextStyle(fontSize: 20),
-          //     ),
-          //     const Text(
-          //       'Última Actualización: 15-09-2024 22:17',
-          //       style: TextStyle(fontSize: 20),
-          //     ),
-          //     const Text(
-          //       'Estado Dispositivo: CONECTADO',
-          //       style: TextStyle(fontSize: 20),
-          //     ),
-          //   ],
-          // ),
+          InfoDisplay(
+            // currentWaterLevel: (currentWaterLevel * 100).toStringAsFixed(0),
+            currentWaterLevel: _dataCard.percentage,
+            lastUpdate: _dataCard.readDate,
+            isConnected: _dataCard.isConnected,
+          )
         ],
       ),
     );
@@ -234,15 +155,22 @@ class _WaterTankLevelState extends State<WaterTankLevel>
 }
 
 class InfoDisplay extends StatelessWidget {
-  final double currentWaterLevel;
+  final String currentWaterLevel;
+  final String lastUpdate;
+  final bool isConnected;
 
-  const InfoDisplay({super.key, required this.currentWaterLevel});
+  const InfoDisplay({
+    super.key,
+    required this.currentWaterLevel,
+    required this.lastUpdate,
+    required this.isConnected,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
@@ -270,18 +198,27 @@ class InfoDisplay extends StatelessWidget {
           _InfoDetail(
             icon: Icons.update,
             color: Colors.orange,
-            label: 'Última\nActualización',
-            value: '15-09-2024 22:17',
+            label: 'Última Actualización',
+            value: lastUpdate,
           ),
           const SizedBox(height: 15),
           // Estado del Dispositivo
-          _InfoDetail(
-            icon: Icons.wifi,
-            color: Colors.green,
-            label: 'Estado Dispositivo',
-            value: 'CONECTADO',
-            textColor: Colors.green,
-          ),
+          if (isConnected)
+            _InfoDetail(
+              icon: Icons.wifi,
+              color: Colors.green,
+              label: 'Estado Dispositivo',
+              value: 'CONECTADO',
+              textColor: Colors.green,
+            )
+          else
+            _InfoDetail(
+              icon: Icons.wifi_off,
+              color: Colors.red,
+              label: 'Estado Dispositivo',
+              value: 'DESCONECTADO',
+              textColor: Colors.red,
+            ),
         ],
       ),
     );
@@ -309,7 +246,7 @@ class _InfoDetail extends StatelessWidget {
     return Row(
       children: [
         Icon(icon, color: color, size: 30),
-        const SizedBox(width: 10),
+        const SizedBox(width: 5),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -9,6 +9,12 @@ class MonitoringService extends ChangeNotifier {
   final String _baseUrl = 'facturacionapi.tsi.pe';
 
   List<Monitoring> monitorings = [];
+  Monitoring lastMonitoring = Monitoring(
+      readDate: '',
+      measured: '',
+      status: '',
+      percentage: '',
+      isConnected: false);
   MonitoringResponse response = MonitoringResponse(count: 0, results: []);
   late Monitoring selectedMonitoring;
   bool isLoading = true;
@@ -32,11 +38,16 @@ class MonitoringService extends ChangeNotifier {
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/monitoring/', params);
     final resp = await http.get(url);
-    final monitoringResponse =
-        MonitoringResponse.fromJson(json.decode(resp.body));
-    _count = monitoringResponse.count;
-    monitorings = monitoringResponse.results;
-    response = monitoringResponse;
+    final res = json.decode(resp.body);
+    if (!res.containsKey('detail')) {
+      final monitoringResponse =
+          MonitoringResponse.fromJson(json.decode(resp.body));
+      _count = monitoringResponse.count;
+      monitorings = monitoringResponse.results;
+      response = monitoringResponse;
+    } else {
+      monitorings = [];
+    }
 
     notifyListeners();
   }
@@ -62,23 +73,11 @@ class MonitoringService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future loadMoreMonitorings(String? search) async {
-    // _page++;
+  Future getLastReading() async {
+    // final url = Uri.https(_baseUrl, '/api/login/');
+    final url = Uri.http(_baseUrl, '/api/monitoring/get_last/');
+    final resp = await http.get(url);
+    lastMonitoring = Monitoring.fromJson(json.decode(resp.body));
     notifyListeners();
-    final Map<String, dynamic> params = {
-      'page_size': '20',
-      'page': '$_page',
-      'search': search,
-    };
-    if (_count > monitorings.length) {
-      // final url = Uri.https(_baseUrl, '/api/login/');
-      final url = Uri.http(_baseUrl, '/api/Monitoring/', params);
-      final resp = await http.get(url);
-      final monitoringResponse =
-          MonitoringResponse.fromJson(json.decode(resp.body));
-      monitorings = [...monitorings, ...monitoringResponse.results];
-
-      notifyListeners();
-    }
   }
 }

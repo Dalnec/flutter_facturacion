@@ -31,10 +31,16 @@ class PurchaseService extends ChangeNotifier {
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/purchase/', params);
     final resp = await http.get(url);
-    final purchaseResponse = PurchaseResponse.fromJson(json.decode(resp.body));
-    _count = purchaseResponse.count;
-    purchases = purchaseResponse.results;
-    response = purchaseResponse;
+    final res = json.decode(resp.body);
+    if (!res.containsKey('detail')) {
+      final purchaseResponse =
+          PurchaseResponse.fromJson(json.decode(resp.body));
+      _count = purchaseResponse.count;
+      purchases = purchaseResponse.results;
+      response = purchaseResponse;
+    } else {
+      purchases = [];
+    }
 
     notifyListeners();
   }

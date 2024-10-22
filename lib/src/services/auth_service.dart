@@ -53,6 +53,10 @@ class AuthService extends ChangeNotifier {
         key: 'profile',
         value: '${decodedResp['user']['profile_description']}',
       );
+      await storage.write(
+        key: 'usuario',
+        value: '${decodedResp['user']['usuario_id']}',
+      );
       return null;
     } else {
       return decodedResp['error'];
@@ -63,6 +67,7 @@ class AuthService extends ChangeNotifier {
     await storage.delete(key: 'token');
     await storage.delete(key: 'employee');
     await storage.delete(key: 'profile');
+    await storage.delete(key: 'usuario');
   }
 
   Future<String> readToken() async {

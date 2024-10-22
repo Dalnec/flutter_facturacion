@@ -20,6 +20,7 @@ class Usuario {
   String? username;
   String? password;
   bool? hasDebt;
+  bool makeInvoice;
 
   Usuario({
     this.id,
@@ -37,6 +38,7 @@ class Usuario {
     this.user,
     required this.employee,
     this.hasDebt,
+    required this.makeInvoice,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
@@ -55,6 +57,7 @@ class Usuario {
         user: json["user"],
         employee: json["employee"],
         hasDebt: json["hasDebt"],
+        makeInvoice: json["makeInvoice"],
       );
 
   // String usuarioToJson(Usuario data) => json.encode(data.toJson());
@@ -77,6 +80,8 @@ class Usuario {
         "employee": employee,
         "username": username,
         "password": password,
+        "hasDebt": hasDebt,
+        "makeInvoice": makeInvoice,
       };
 
   Usuario copy() => Usuario(
@@ -95,18 +100,6 @@ class Usuario {
         user: user,
         employee: employee,
         hasDebt: hasDebt,
+        makeInvoice: makeInvoice,
       );
-  // Usuario initValues() => Usuario(
-  //       ci: '',
-  //       names: '',
-  //       lastnames: '',
-  //       gender: '',
-  //       phone: '',
-  //       email: '',
-  //       family: '',
-  //       address: '',
-  //       status: '',
-  //       user: 0,
-  //       employee: 0,
-  //     );
 }

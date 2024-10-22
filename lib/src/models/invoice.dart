@@ -9,9 +9,11 @@ class Invoice {
   String price;
   String total;
   String status;
+  String ticket;
   String? observations;
   int employee;
   int usuario;
+  String period;
 
   Invoice({
     this.id,
@@ -25,6 +27,8 @@ class Invoice {
     this.observations,
     required this.employee,
     required this.usuario,
+    required this.period,
+    required this.ticket,
   });
 
   factory Invoice.fromRawJson(String str) => Invoice.fromJson(json.decode(str));
@@ -43,6 +47,8 @@ class Invoice {
         observations: json["observations"],
         employee: json["employee"],
         usuario: json["usuario"],
+        period: json["period"],
+        ticket: json["ticket"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -57,5 +63,7 @@ class Invoice {
         "observations": observations,
         "employee": employee,
         "usuario": usuario,
+        "period": period,
+        "ticket": ticket,
       };
 }

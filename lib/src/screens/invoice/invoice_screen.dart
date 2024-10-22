@@ -73,6 +73,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               children: [
                 Expanded(
                   child: TextField(
+                    // autofocus: true,
                     controller: _searchController,
                     decoration: InputDecoration(
                       prefixIcon: _searchController.text.isEmpty
@@ -85,7 +86,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                                 setState(() {});
                               },
                             ),
-                      hintText: 'Buscar...',
+                      // hintText: 'Buscar...',
+                      labelText: 'Buscar',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.search),
                         onPressed: () {

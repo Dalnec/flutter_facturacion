@@ -46,7 +46,6 @@ class InvoiceService extends ChangeNotifier {
       },
     );
     final decodedData = json.decode(resp.body);
-    print(decodedData);
     final index = invoices.indexWhere((element) => element.id == invoice.id);
     invoices[index] = invoice;
 
@@ -84,12 +83,17 @@ class InvoiceService extends ChangeNotifier {
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/invoice/', params);
     final resp = await http.get(url);
-    final invoiceResponse = InvoiceResponse.fromJson(json.decode(resp.body));
-    _count = invoiceResponse.count;
-    invoices = invoiceResponse.results;
+    final res = json.decode(resp.body);
+    if (!res.containsKey('detail')) {
+      final invoiceResponse = InvoiceResponse.fromJson(json.decode(resp.body));
+      _count = invoiceResponse.count;
+      invoices = invoiceResponse.results;
 
-    isLoading = false;
-    notifyListeners();
+      isLoading = false;
+      notifyListeners();
+    } else {
+      invoices = [];
+    }
   }
 
   Future loadMoreInvoices(String? search) async {
@@ -111,19 +115,24 @@ class InvoiceService extends ChangeNotifier {
     }
   }
 
-  Future getInvoicesResponse(String? search,
+  Future getInvoicesResponse(String? usuarioId,
       [int pageSize = 10, int page = 1]) async {
     final Map<String, dynamic> params = {
       'page_size': '$pageSize',
       'page': '$page',
-      'search': search,
+      'usuario': usuarioId,
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/invoice/', params);
     final resp = await http.get(url);
-    response = InvoiceResponse.fromJson(json.decode(resp.body));
-    invoices = response.results;
-    notifyListeners();
+    final res = json.decode(resp.body);
+    if (!res.containsKey('detail')) {
+      response = InvoiceResponse.fromJson(json.decode(resp.body));
+      invoices = response.results;
+      notifyListeners();
+    } else {
+      invoices = [];
+    }
   }
 }

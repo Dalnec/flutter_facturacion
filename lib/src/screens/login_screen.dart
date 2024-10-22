@@ -59,25 +59,6 @@ class _LoginForm extends StatelessWidget {
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             children: [
-              // TextFormField(
-              //   autocorrect: false,
-              //   keyboardType: TextInputType.emailAddress,
-              //   decoration: InputDecorations.authInputDecoration(
-              //     hintText: 'user@example.com',
-              //     labelText: 'Correo Electronico',
-              //     prefixIcon: Icons.alternate_email_sharp,
-              //   ),
-              //   onChanged: (value) => loginForm.email = value,
-              //   validator: (value) {
-              //     String pattern =
-              //         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-
-              //     RegExp regExp = RegExp(pattern);
-              //     return regExp.hasMatch(value ?? '')
-              //         ? null
-              //         : 'Email no Valido';
-              //   },
-              // ),
               TextFormField(
                 autocorrect: false,
                 keyboardType: TextInputType.text,

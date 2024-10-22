@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:facturacion/src/themes/theme.dart';
-import 'package:facturacion/src/services/services.dart' show AuthService;
+import 'package:facturacion/src/services/services.dart'
+    show AuthService, UsuarioService;
 import 'package:facturacion/src/widgets/widgets.dart'
     show BarChartWidget, InvoiceDataTable;
 
@@ -11,6 +12,7 @@ class UserInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final usuarioService = Provider.of<UsuarioService>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Información de Usuario'),
@@ -26,45 +28,36 @@ class UserInfoScreen extends StatelessWidget {
               ))
         ],
       ),
-      body: ListView(
-        children: [
-          const SizedBox(height: 5),
-          const Text(
-              textAlign: TextAlign.center,
-              "Consumo Mensual:",
-              style: TextStyle(
-                color: AppTheme.primary,
-                fontSize: 20,
-              )),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _CardContainer(
-              height: 230,
+      body: NestedScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return [
+            const SliverToBoxAdapter(
+                child: Text(
+                    textAlign: TextAlign.center,
+                    "Ultimas Recibos:",
+                    style: TextStyle(
+                      color: AppTheme.primary,
+                      fontSize: 20,
+                    ))),
+            SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                // child: LineChartExample(),
-                child: BarChartWidget(),
+                padding: const EdgeInsets.all(8.0),
+                child: _CardContainer(
+                  height: 230,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                    child: BarChartWidget(),
+                  ),
+                ),
               ),
-            ),
-          ),
-          // const Text(
-          //     textAlign: TextAlign.center,
-          //     "Lista de Recibos:",
-          //     style: TextStyle(
-          //       color: AppTheme.primary,
-          //       fontSize: 20,
-          //     )),
-          const InvoiceDataTable(),
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: _CardContainer(
-          //       child: PaginatedDataTableWidget(
-          //     source: _MyDataTableSource(datos),
-          //     headingRowColor: AppTheme.primary,
-          //     columns: _columnsDataTable(),
-          //   )),
-          // ),
-        ],
+            )
+          ];
+        },
+        body: InvoiceDataTable(
+          usuario: usuarioService.selectedUsuario,
+        ),
       ),
     );
   }

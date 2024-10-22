@@ -1,3 +1,6 @@
+export 'package:facturacion/src/widgets/ticket_format.dart';
+export 'package:facturacion/src/widgets/invoice/card_info.dart';
+export 'package:facturacion/src/widgets/custom_navigatorbar.dart';
 export 'package:facturacion/src/widgets/invoice_datatable.dart';
 export 'package:facturacion/src/widgets/background.dart';
 export 'package:facturacion/src/widgets/charts/bar_chart.dart';

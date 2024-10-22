@@ -87,6 +87,15 @@ class AppTheme {
       todayForegroundColor: WidgetStatePropertyAll(harp),
       dayOverlayColor: WidgetStatePropertyAll(primary),
     ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: primary,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.grey[400],
+      selectedIconTheme: const IconThemeData(
+        color: Colors.white,
+      ),
+      unselectedIconTheme: IconThemeData(color: Colors.grey[400]),
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith(

@@ -1,56 +1,29 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:facturacion/src/models/models.dart';
 import 'package:facturacion/src/themes/theme.dart';
-import 'package:facturacion/src/models/models.dart' show Usuario, Invoice;
-import 'package:facturacion/src/services/services.dart'
-    show UsuarioService, InvoiceService;
+import 'package:flutter/material.dart';
 
-class UserCardInvoiceInfo extends StatelessWidget {
+class CardInfoUserInvoice extends StatelessWidget {
   final Usuario usuario;
-  final UsuarioService service;
-
-  const UserCardInvoiceInfo({
-    super.key,
-    required this.usuario,
-    required this.service,
-  });
+  const CardInfoUserInvoice({super.key, required this.usuario});
 
   @override
   Widget build(BuildContext context) {
-    final invoiceService = Provider.of<InvoiceService>(context);
-    return InkWell(
-      onTap: () {
-        service.selectedUsuario = usuario.copy();
-        invoiceService.selectedInvoice = Invoice(
-          readDate: '',
-          measured: '',
-          price: '',
-          total: '',
-          status: 'D',
-          employee: 0,
-          usuario: usuario.id!,
-          period: '',
-          ticket: '',
-        );
-        Navigator.pushNamed(context, 'invoicehome');
-      },
-      borderRadius: BorderRadius.circular(20),
-      child: Padding(
-        key: const Key('card_container'),
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-        child: Container(
-          padding:
-              const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 10),
-          width: double.infinity,
-          decoration: _createCardShape(),
-          child: _UserInfo(
-            hasDebt: usuario.hasDebt!,
-            code: usuario.id.toString(),
-            family: usuario.family,
-            addres: usuario.address,
-            phone: usuario.phone,
-            makeInvoice: usuario.makeInvoice,
-          ),
+    return Padding(
+      key: const Key('card_container'),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+      child: Container(
+        padding:
+            const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 10),
+        width: double.infinity,
+        decoration: _createCardShape(),
+        child: _UserInfo(
+          hasDebt: usuario.hasDebt!,
+          code: usuario.id.toString(),
+          family: usuario.family,
+          addres: usuario.address,
+          phone: usuario.phone,
+          names: usuario.names,
+          lastnames: usuario.lastnames,
         ),
       ),
     );
@@ -71,11 +44,12 @@ class UserCardInvoiceInfo extends StatelessWidget {
 
 class _UserInfo extends StatelessWidget {
   final bool hasDebt;
-  final bool makeInvoice;
   final String code;
   final String family;
   final String addres;
   final String phone;
+  final String names;
+  final String lastnames;
 
   const _UserInfo({
     super.key,
@@ -84,7 +58,8 @@ class _UserInfo extends StatelessWidget {
     required this.family,
     required this.addres,
     required this.phone,
-    required this.makeInvoice,
+    required this.names,
+    required this.lastnames,
   });
 
   @override
@@ -109,11 +84,6 @@ class _UserInfo extends StatelessWidget {
                     style: const TextStyle(fontSize: 16)),
               ],
             ),
-            !makeInvoice
-                ? const Icon(Icons.receipt_long_outlined,
-                    color: AppTheme.tertiary, size: 30)
-                : const Icon(Icons.receipt_long_outlined,
-                    color: AppTheme.error, size: 30),
             Row(
               children: [
                 !hasDebt
@@ -145,17 +115,8 @@ class _UserInfo extends StatelessWidget {
         const SizedBox(height: 5),
         _rowInfo(Icons.phone, phone),
         const SizedBox(height: 5),
-        // const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        //   Icon(Icons.check, color: AppTheme.success, size: 25),
-        //   SizedBox(width: 10),
-        //   Text(
-        //     "AL DIA", //Habido
-        //     style: TextStyle(
-        //         fontSize: 20,
-        //         fontWeight: FontWeight.bold,
-        //         color: AppTheme.success),
-        //   )
-        // ])
+        _rowInfo(Icons.person, '$names $lastnames'),
+        const SizedBox(height: 5),
       ],
     );
   }

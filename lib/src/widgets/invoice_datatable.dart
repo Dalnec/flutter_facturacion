@@ -1,11 +1,14 @@
+import 'package:facturacion/src/screens/screens.dart' show TicketScreen;
 import 'package:facturacion/src/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:facturacion/src/models/models.dart';
 import 'package:facturacion/src/services/services.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class InvoiceDataTable extends StatefulWidget {
-  const InvoiceDataTable({Key? key}) : super(key: key);
+  final Usuario usuario;
+  const InvoiceDataTable({super.key, required this.usuario});
 
   @override
   _InvoiceDataTableState createState() => _InvoiceDataTableState();
@@ -17,6 +20,8 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
   bool _isLoading = false;
   bool _hasMoreData = true;
   final List<Invoice> _data = [];
+  final storage = const FlutterSecureStorage();
+  String _profile = '';
 
   final ScrollController _scrollController = ScrollController();
 
@@ -24,8 +29,8 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels + 200 ==
-              _scrollController.position.maxScrollExtent &&
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
           _hasMoreData) {
         _loadMoreData();
       }
@@ -39,22 +44,26 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
     super.dispose();
   }
 
-  @override
-  void setState(fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
-
   Future<void> _fetchData() async {
     setState(() {
       _isLoading = true;
     });
-
+    _profile = await storage.read(key: 'profile') ?? '';
+    final String usuarioId;
+    if (_profile == 'USUARIO') {
+      usuarioId = await storage.read(key: 'usuario') ?? '';
+    } else {
+      usuarioId = "${widget.usuario.id}";
+    }
     final invoiceService = Provider.of<InvoiceService>(context, listen: false);
 
-    await invoiceService.getInvoicesResponse('', _pageSize, _currentPage);
-    final newData = invoiceService.response.results;
+    await invoiceService.getInvoicesResponse(
+      usuarioId,
+      _pageSize,
+      _currentPage,
+    );
+    print("usuario: ${widget.usuario.id}");
+    final newData = invoiceService.invoices;
 
     if (newData.isEmpty) {
       _hasMoreData = false;
@@ -85,67 +94,86 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
             controller: _scrollController,
             child: Column(
               children: [
-                DataTable(
-                  headingRowColor:
-                      const WidgetStatePropertyAll(AppTheme.primary),
-                  headingRowHeight: 35,
-                  columnSpacing: 18,
-                  columns: const [
-                    DataColumn(
-                        label: Text(
-                          'Fecha',
-                          style: TextStyle(color: AppTheme.harp),
-                        ),
-                        headingRowAlignment: MainAxisAlignment.center),
-                    DataColumn(
-                        label: Text(
-                          'Medido',
-                          style: TextStyle(color: AppTheme.harp),
-                        ),
-                        headingRowAlignment: MainAxisAlignment.center),
-                    DataColumn(
-                        label: Text(
-                          'Precio',
-                          style: TextStyle(color: AppTheme.harp),
-                        ),
-                        headingRowAlignment: MainAxisAlignment.center),
-                    DataColumn(
-                        label: Text(
-                          'Total',
-                          style: TextStyle(color: AppTheme.harp),
-                        ),
-                        headingRowAlignment: MainAxisAlignment.center),
-                    DataColumn(
-                        label: Text(
-                          'Encargado',
-                          style: TextStyle(color: AppTheme.harp),
-                        ),
-                        headingRowAlignment: MainAxisAlignment.center),
-                  ],
-                  rows: _data
-                      .map((item) => DataRow(cells: [
-                            DataCell(Text(
-                              item.readDate,
-                              textAlign: TextAlign.center,
-                            )),
-                            DataCell(Text(
-                              item.measured,
-                              textAlign: TextAlign.center,
-                            )),
-                            DataCell(Text(
-                              item.price,
-                              textAlign: TextAlign.center,
-                            )),
-                            DataCell(Text(
-                              item.total,
-                              textAlign: TextAlign.center,
-                            )),
-                            DataCell(Text(
-                              item.employee.toString(),
-                              textAlign: TextAlign.center,
-                            )),
-                          ]))
-                      .toList(),
+                SizedBox(
+                  width: double.infinity,
+                  child: DataTable(
+                    showCheckboxColumn: false,
+                    headingRowColor:
+                        const WidgetStatePropertyAll(AppTheme.primary),
+                    headingRowHeight: 35,
+                    columnSpacing: 18,
+                    columns: const [
+                      DataColumn(
+                          label: Text(
+                            'Periodo',
+                            style: TextStyle(color: AppTheme.harp),
+                          ),
+                          headingRowAlignment: MainAxisAlignment.center),
+                      DataColumn(
+                          label: Text(
+                            'Lectura',
+                            style: TextStyle(color: AppTheme.harp),
+                          ),
+                          headingRowAlignment: MainAxisAlignment.center),
+                      DataColumn(
+                          label: Text(
+                            'Total',
+                            style: TextStyle(color: AppTheme.harp),
+                          ),
+                          headingRowAlignment: MainAxisAlignment.center),
+                      DataColumn(
+                          label: Text(
+                            'Estado',
+                            style: TextStyle(color: AppTheme.harp),
+                          ),
+                          headingRowAlignment: MainAxisAlignment.center),
+                    ],
+                    rows: _data
+                        .map((item) => DataRow(
+                                onSelectChanged: (value) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => TicketScreen(
+                                        data: item.ticket,
+                                        status: item.status,
+                                        profile: _profile,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                cells: [
+                                  DataCell(Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      item.period,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )),
+                                  DataCell(Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      item.measured,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )),
+                                  DataCell(Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      item.total,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )),
+                                  DataCell(Container(
+                                    alignment: Alignment.center,
+                                    child: Icon(Icons.check_circle,
+                                        color: item.status == 'P'
+                                            ? Colors.green
+                                            : Colors.amber),
+                                  )),
+                                ]))
+                        .toList(),
+                  ),
                 ),
                 if (_isLoading)
                   const Padding(

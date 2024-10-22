@@ -24,8 +24,8 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels + 200 ==
-              _scrollController.position.maxScrollExtent &&
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
           _hasMoreData) {
         _loadMoreData();
       }
@@ -48,7 +48,7 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
         Provider.of<PurchaseService>(context, listen: false);
 
     await purchaseService.getPurchases('', _pageSize, _currentPage);
-    final newData = purchaseService.response.results;
+    final newData = purchaseService.purchases;
 
     if (newData.isEmpty) {
       _hasMoreData = false;
@@ -80,67 +80,85 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
               controller: _scrollController,
               child: Column(
                 children: [
-                  DataTable(
-                    headingRowColor:
-                        const WidgetStatePropertyAll(AppTheme.primary),
-                    headingRowHeight: 35,
-                    columnSpacing: 18,
-                    columns: const [
-                      DataColumn(
-                          label: Text(
-                            'Fecha',
-                            style: TextStyle(color: AppTheme.harp),
-                          ),
-                          headingRowAlignment: MainAxisAlignment.center),
-                      DataColumn(
-                          label: Text(
-                            'Cantidad',
-                            style: TextStyle(color: AppTheme.harp),
-                          ),
-                          headingRowAlignment: MainAxisAlignment.center),
-                      DataColumn(
-                          label: Text(
-                            'Precio',
-                            style: TextStyle(color: AppTheme.harp),
-                          ),
-                          headingRowAlignment: MainAxisAlignment.center),
-                      DataColumn(
-                          label: Text(
-                            'Total',
-                            style: TextStyle(color: AppTheme.harp),
-                          ),
-                          headingRowAlignment: MainAxisAlignment.center),
-                      DataColumn(
-                          label: Text(
-                            'Encargado',
-                            style: TextStyle(color: AppTheme.harp),
-                          ),
-                          headingRowAlignment: MainAxisAlignment.center),
-                    ],
-                    rows: _data
-                        .map((item) => DataRow(cells: [
-                              DataCell(Text(
-                                item.purchasedDate,
-                                textAlign: TextAlign.center,
-                              )),
-                              DataCell(Text(
-                                item.liters,
-                                textAlign: TextAlign.center,
-                              )),
-                              DataCell(Text(
-                                item.price,
-                                textAlign: TextAlign.center,
-                              )),
-                              DataCell(Text(
-                                item.total,
-                                textAlign: TextAlign.center,
-                              )),
-                              DataCell(Text(
-                                item.employee.toString(),
-                                textAlign: TextAlign.center,
-                              )),
-                            ]))
-                        .toList(),
+                  SizedBox(
+                    width: double.infinity,
+                    child: DataTable(
+                      headingRowColor:
+                          const WidgetStatePropertyAll(AppTheme.primary),
+                      headingRowHeight: 35,
+                      columnSpacing: 18,
+                      columns: const [
+                        DataColumn(
+                            label: Text(
+                              'Fecha',
+                              style: TextStyle(color: AppTheme.harp),
+                            ),
+                            headingRowAlignment: MainAxisAlignment.center),
+                        DataColumn(
+                            label: Text(
+                              'Cantidad',
+                              style: TextStyle(color: AppTheme.harp),
+                            ),
+                            headingRowAlignment: MainAxisAlignment.center),
+                        DataColumn(
+                            label: Text(
+                              'Precio',
+                              style: TextStyle(color: AppTheme.harp),
+                            ),
+                            headingRowAlignment: MainAxisAlignment.center),
+                        DataColumn(
+                            label: Text(
+                              'Total',
+                              style: TextStyle(color: AppTheme.harp),
+                            ),
+                            headingRowAlignment: MainAxisAlignment.center),
+                        DataColumn(
+                            label: Text(
+                              'Encargado',
+                              style: TextStyle(color: AppTheme.harp),
+                            ),
+                            headingRowAlignment: MainAxisAlignment.center),
+                      ],
+                      rows: _data
+                          .map((item) => DataRow(cells: [
+                                DataCell(Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    item.purchasedDate,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )),
+                                DataCell(Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    item.liters,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )),
+                                DataCell(Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    item.price,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )),
+                                DataCell(Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    item.total,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )),
+                                DataCell(Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    item.employee.toString(),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                )),
+                              ]))
+                          .toList(),
+                    ),
                   ),
                   if (_isLoading)
                     const Padding(

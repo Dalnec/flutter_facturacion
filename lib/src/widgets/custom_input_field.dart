@@ -11,6 +11,7 @@ class CustomInputField extends StatelessWidget {
   final IconData? prefixIcon;
   final TextInputType? keyboardType;
   final bool obscureText;
+  final bool? enabled;
   final int? length;
 
   final String? initialValue;
@@ -35,11 +36,13 @@ class CustomInputField extends StatelessWidget {
     this.length = 3,
     this.onChanged,
     this.inputFormatters,
+    this.enabled,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: enabled ?? true,
       autofocus: false,
       initialValue: initialValue,
       textCapitalization: TextCapitalization.words,

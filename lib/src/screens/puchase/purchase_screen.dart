@@ -14,14 +14,6 @@ class PurchaseScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final purchaseService =
         Provider.of<PurchaseService>(context, listen: false);
-    final List<Map<String, dynamic>> datos = List.generate(
-      100,
-      (index) => {
-        'id': index + 1,
-        'name': 'Nombre $index',
-        'age': 20 + index % 10,
-      },
-    );
 
     return Scaffold(
       appBar: AppBar(
