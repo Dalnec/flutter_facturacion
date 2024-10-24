@@ -18,6 +18,7 @@ class CustomInputField extends StatelessWidget {
   final String formProperty;
   final Map<String, String>? formValues;
   final Function? onChanged;
+  final Function? validator;
   final List<FilteringTextInputFormatter>? inputFormatters;
 
   const CustomInputField({
@@ -37,6 +38,7 @@ class CustomInputField extends StatelessWidget {
     this.onChanged,
     this.inputFormatters,
     this.enabled,
+    this.validator,
   });
 
   @override
@@ -55,7 +57,7 @@ class CustomInputField extends StatelessWidget {
           ? (value) {
               if (value == null) return 'Campo requerido';
               return value.length < length!
-                  ? 'Debe ser mayor a 3 caracteres'
+                  ? 'Debe ser mayor a $length caracteres'
                   : null;
             }
           : null,

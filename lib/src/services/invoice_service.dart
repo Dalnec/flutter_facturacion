@@ -115,16 +115,19 @@ class InvoiceService extends ChangeNotifier {
     }
   }
 
-  Future getInvoicesResponse(String? usuarioId,
-      [int pageSize = 10, int page = 1]) async {
+  Future getInvoicesResponse(String? usuarioId, int? year,
+      [ordering = "-id", int pageSize = 10, int page = 1]) async {
     final Map<String, dynamic> params = {
       'page_size': '$pageSize',
       'page': '$page',
       'usuario': usuarioId,
+      'year': year != null ? '$year' : '',
+      'ordering': ordering,
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/invoice/', params);
+    print(url);
     final resp = await http.get(url);
     final res = json.decode(resp.body);
     if (!res.containsKey('detail')) {

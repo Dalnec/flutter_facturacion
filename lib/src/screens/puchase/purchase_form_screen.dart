@@ -61,16 +61,6 @@ class _PurchaseFormProviderBody extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        // InputDatePickerFormField(
-                        //   keyboardType: TextInputType.datetime,
-                        //   initialDate: DateTime.now(),
-                        //   firstDate: DateTime(1900),
-                        //   lastDate: DateTime(2100),
-                        //   fieldLabelText: 'Fecha de Compra',
-                        //   fieldHintText: 'Fecha de Compra',
-                        //   onDateSaved: (value) =>
-                        //       purchase.purchasedDate = value.toIso8601String(),
-                        // ),
                         TextField(
                           controller: _dateController,
                           keyboardType: TextInputType.datetime,

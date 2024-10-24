@@ -20,6 +20,7 @@ class UsuarioService extends ChangeNotifier {
     status: "",
     employee: 0,
     makeInvoice: false,
+    hasDebt: false,
   );
   // late Usuario selectedUsuario;
   bool isLoading = true;
@@ -106,6 +107,21 @@ class UsuarioService extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future getUsuario(String? id) async {
+    isLoading = true;
+    notifyListeners();
+
+    // final url = Uri.https(_baseUrl, '/api/login/');
+    final url = Uri.http(_baseUrl, '/api/usuario/$id/');
+    final resp = await http.get(url);
+    final usuario = Usuario.fromJson(json.decode(resp.body));
+
+    selectedUsuario = usuario;
+
+    isLoading = false;
+    notifyListeners();
+  }
+
   Future loadMoreUsuarios(String? search) async {
     _page++;
     notifyListeners();
@@ -131,5 +147,18 @@ class UsuarioService extends ChangeNotifier {
     usuarios[index].makeInvoice = false;
     selectedUsuario.makeInvoice = false;
     notifyListeners();
+  }
+
+  Future<bool> changePassword(String id, String password) async {
+    final url = Uri.http(_baseUrl, 'api/usuario/$id/change_password/');
+    final resp = await http.put(
+      url,
+      body: '{"password": "$password"}',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    print(resp.statusCode);
+    return resp.statusCode == 201 ? true : false;
   }
 }

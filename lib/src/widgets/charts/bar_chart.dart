@@ -1,24 +1,39 @@
-import 'package:facturacion/src/themes/theme.dart';
-// import 'package:fl_chart_app/presentation/resources/app_resources.dart';
-// import 'package:fl_chart_app/util/extensions/color_extensions.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
 import 'dart:math';
+import 'package:facturacion/src/models/models.dart';
+import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:facturacion/src/themes/theme.dart';
+import 'package:facturacion/src/services/services.dart' show InvoiceService;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
 
 class BarChartWidget extends StatefulWidget {
-  BarChartWidget({super.key});
+  final int? year;
 
-  final Color dark = AppTheme.primary
-      .withOpacity(0.9); /* AppColors.contentColorCyan.darken(60); */
-  final Color normal = AppTheme.primary
-      .withOpacity(0.2); /* AppColors.contentColorCyan.darken(30); */
-  final Color light = AppTheme.harp; /* AppColors.contentColorCyan; */
+  BarChartWidget({super.key, this.year});
+
+  final Color dark = AppTheme.primary.withOpacity(0.9);
+  final Color normal = AppTheme.primary.withOpacity(0.2);
+  final Color light = AppTheme.harp;
 
   @override
   State<StatefulWidget> createState() => BarChartWidgetState();
 }
 
 class BarChartWidgetState extends State<BarChartWidget> {
+  bool _isLoading = false;
+  final storage = const FlutterSecureStorage();
+  String _profile = '';
+  final int _pageSize = 12;
+  List<Invoice> _data = [];
+  int _year = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
   Widget bottomTitles(double value, TitleMeta meta) {
     const style = TextStyle(fontSize: 11, fontWeight: FontWeight.bold);
     String text;
@@ -63,7 +78,8 @@ class BarChartWidgetState extends State<BarChartWidget> {
       return Container();
     }
     const style = TextStyle(
-      fontSize: 12,
+      fontSize: 10,
+      fontWeight: FontWeight.bold,
     );
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -74,161 +90,121 @@ class BarChartWidgetState extends State<BarChartWidget> {
     );
   }
 
+  Future<void> _fetchData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    _profile = await storage.read(key: 'profile') ?? '';
+    final String usuarioId;
+    usuarioId = await storage.read(key: 'usuario') ?? '';
+    final invoiceService = Provider.of<InvoiceService>(context, listen: false);
+    await invoiceService.getInvoicesResponse(
+      usuarioId,
+      widget.year,
+      '-read_date',
+      _pageSize,
+      1,
+    );
+    final newData = invoiceService.invoices;
+    _data = newData;
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_year != widget.year && widget.year != null) {
+      _year = widget.year!;
+      _fetchData();
+      _data.clear();
+      setState(() {});
+    }
     return AspectRatio(
       aspectRatio: 1,
       child: Padding(
-        padding: const EdgeInsets.only(top: 16),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final barsSpace = 15.0 * constraints.maxWidth / 400;
-            final barsWidth = 15.0 * constraints.maxWidth / 400;
-            return BarChart(
-              BarChartData(
-                alignment: BarChartAlignment.center,
-                barTouchData: BarTouchData(
-                    enabled: true,
-                    touchTooltipData: BarTouchTooltipData(
-                      getTooltipColor: (group) => Colors.transparent,
-                      tooltipPadding: EdgeInsets.zero,
-                      tooltipMargin: 2,
-                      getTooltipItem: (
-                        BarChartGroupData group,
-                        int groupIndex,
-                        BarChartRodData rod,
-                        int rodIndex,
-                      ) {
-                        return BarTooltipItem(
-                          rod.toY.toString(),
-                          const TextStyle(
-                            fontSize: 10,
-                            color: AppTheme.primary,
-                            fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.only(top: 10, bottom: 0, left: 0, right: 0),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : LayoutBuilder(
+                builder: (context, constraints) {
+                  final barsSpace = 13.5 * constraints.maxWidth / 400;
+                  final barsWidth = 18.0 * constraints.maxWidth / 400;
+                  return BarChart(
+                    BarChartData(
+                      alignment: BarChartAlignment.center,
+                      barTouchData: BarTouchData(
+                          enabled: true,
+                          touchTooltipData: BarTouchTooltipData(
+                            getTooltipColor: (group) => Colors.transparent,
+                            tooltipPadding: EdgeInsets.zero,
+                            tooltipMargin: -2,
+                            getTooltipItem: (
+                              BarChartGroupData group,
+                              int groupIndex,
+                              BarChartRodData rod,
+                              int rodIndex,
+                            ) {
+                              return BarTooltipItem(
+                                rod.toY.toString(),
+                                const TextStyle(
+                                  fontSize: 10,
+                                  color: AppTheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            },
+                          )),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 25,
+                            getTitlesWidget: bottomTitles,
                           ),
-                        );
-                      },
-                    )),
-                titlesData: FlTitlesData(
-                  show: true,
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 25,
-                      getTitlesWidget: bottomTitles,
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 30,
+                            getTitlesWidget: leftTitles,
+                          ),
+                        ),
+                        topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                      ),
+                      gridData: FlGridData(
+                        show: true,
+                        checkToShowHorizontalLine: (value) => value % 5 == 0,
+                        getDrawingHorizontalLine: (value) => FlLine(
+                          color: AppTheme.primary.withOpacity(0.2),
+                          strokeWidth: 1,
+                        ),
+                        drawVerticalLine: false,
+                      ),
+                      borderData: FlBorderData(
+                        show: false,
+                      ),
+                      groupsSpace: barsSpace,
+                      barGroups: _data.reversed
+                          .map(
+                            (data) => makeGroupData(
+                              data.getMonth(),
+                              double.tryParse(data.measured) ?? 0,
+                              width: barsWidth,
+                            ),
+                          )
+                          .toList(),
                     ),
-                  ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      getTitlesWidget: leftTitles,
-                    ),
-                  ),
-                  topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                ),
-                gridData: FlGridData(
-                  show: true,
-                  checkToShowHorizontalLine: (value) => value % 5 == 0,
-                  getDrawingHorizontalLine: (value) => FlLine(
-                    color: AppTheme.primary.withOpacity(0.2),
-                    strokeWidth: 1,
-                  ),
-                  drawVerticalLine: false,
-                ),
-                borderData: FlBorderData(
-                  show: false,
-                ),
-                groupsSpace: barsSpace,
-                // barGroups: getData(barsWidth, barsSpace),
-                barGroups: List.generate(12, (i) {
-                  switch (i) {
-                    case 0:
-                      return makeGroupData(
-                        0,
-                        Random().nextInt(15).toDouble() + 6,
-                        width: barsWidth,
-                      );
-                    case 1:
-                      return makeGroupData(
-                        1,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 2:
-                      return makeGroupData(
-                        2,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 3:
-                      return makeGroupData(
-                        3,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 4:
-                      return makeGroupData(
-                        4,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 5:
-                      return makeGroupData(
-                        5,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 6:
-                      return makeGroupData(
-                        6,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 7:
-                      return makeGroupData(
-                        7,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 8:
-                      return makeGroupData(
-                        8,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 9:
-                      return makeGroupData(
-                        9,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 10:
-                      return makeGroupData(
-                        10,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    case 11:
-                      return makeGroupData(
-                        11,
-                        Random().nextInt(15).toDouble() + 20,
-                        width: barsWidth,
-                      );
-                    default:
-                      return throw Error();
-                  }
-                }),
-                // gridData: const FlGridData(show: false),
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
     );
   }
@@ -238,7 +214,7 @@ class BarChartWidgetState extends State<BarChartWidget> {
     double y, {
     bool isTouched = true,
     Color? barColor,
-    double width = 18,
+    double width = 0,
     List<int> showTooltips = const [0],
   }) {
     barColor ??= AppTheme.primary.withOpacity(0.5);

@@ -11,7 +11,7 @@ class Usuario {
   String lastnames;
   String gender;
   String phone;
-  String email;
+  String? email;
   String family;
   String address;
   String status;
@@ -31,7 +31,7 @@ class Usuario {
     required this.lastnames,
     required this.gender,
     required this.phone,
-    required this.email,
+    this.email,
     required this.family,
     required this.address,
     required this.status,

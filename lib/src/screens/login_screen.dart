@@ -61,7 +61,7 @@ class _LoginForm extends StatelessWidget {
             children: [
               TextFormField(
                 autocorrect: false,
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.visiblePassword,
                 decoration: InputDecorations.authInputDecoration(
                   hintText: 'Mi Usuario',
                   labelText: 'Usuario',
@@ -70,8 +70,8 @@ class _LoginForm extends StatelessWidget {
                 onChanged: (value) => loginForm.email = value,
                 validator: (value) {
                   if (value == null) return 'Campo requerido';
-                  return value.length < 6
-                      ? 'Debe ser mayor a 6 caracteres'
+                  return value.length < 4
+                      ? 'Debe ser mayor a 4 caracteres'
                       : null;
                 },
               ),
@@ -87,8 +87,8 @@ class _LoginForm extends StatelessWidget {
                 ),
                 onChanged: (value) => loginForm.password = value,
                 validator: (value) {
-                  if (value != null && value.length >= 6) return null;
-                  return 'Minimo 6 caracteres';
+                  if (value != null && value.length >= 4) return null;
+                  return 'Minimo 4 caracteres';
                 },
               ),
               const SizedBox(height: 30),

@@ -31,6 +31,14 @@ class Invoice {
     required this.ticket,
   });
 
+  int getMonth() {
+    // Convertir el String a DateTime
+    DateTime parsedDate = DateTime.parse(readDate);
+
+    // Retornar el mes
+    return parsedDate.month - 1;
+  }
+
   factory Invoice.fromRawJson(String str) => Invoice.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());

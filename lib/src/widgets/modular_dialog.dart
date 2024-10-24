@@ -22,7 +22,7 @@ class ModularDialog extends StatelessWidget {
     );
   }
 
-  // Método estático para mostrar el diálogo de manera modular
+  // Método estático para mostrar el diálogo
   static Future<void> showModularDialog({
     required BuildContext context,
     required String title,

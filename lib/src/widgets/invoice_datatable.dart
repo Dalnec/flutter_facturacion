@@ -8,7 +8,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class InvoiceDataTable extends StatefulWidget {
   final Usuario usuario;
-  const InvoiceDataTable({super.key, required this.usuario});
+  final int? year;
+
+  const InvoiceDataTable({super.key, required this.usuario, this.year});
 
   @override
   _InvoiceDataTableState createState() => _InvoiceDataTableState();
@@ -16,12 +18,13 @@ class InvoiceDataTable extends StatefulWidget {
 
 class _InvoiceDataTableState extends State<InvoiceDataTable> {
   int _currentPage = 1;
-  final int _pageSize = 10;
+  final int _pageSize = 12;
   bool _isLoading = false;
   bool _hasMoreData = true;
   final List<Invoice> _data = [];
   final storage = const FlutterSecureStorage();
   String _profile = '';
+  int _year = 0;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -44,7 +47,7 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
     super.dispose();
   }
 
-  Future<void> _fetchData() async {
+  Future<void> _fetchData([bool isfilter = false]) async {
     setState(() {
       _isLoading = true;
     });
@@ -59,10 +62,11 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
 
     await invoiceService.getInvoicesResponse(
       usuarioId,
+      widget.year,
+      '-id',
       _pageSize,
       _currentPage,
     );
-    print("usuario: ${widget.usuario.id}");
     final newData = invoiceService.invoices;
 
     if (newData.isEmpty) {
@@ -88,6 +92,13 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    if (_year != widget.year && widget.year != null) {
+      _year = widget.year!;
+      _fetchData(true);
+      _data.clear();
+      _currentPage = 1;
+      setState(() {});
+    }
     return _data.isEmpty && _isLoading
         ? const Center(child: CircularProgressIndicator())
         : SingleChildScrollView(

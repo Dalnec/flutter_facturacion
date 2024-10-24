@@ -96,6 +96,11 @@ class AppTheme {
       ),
       unselectedIconTheme: IconThemeData(color: Colors.grey[400]),
     ),
+    navigationDrawerTheme: const NavigationDrawerThemeData(
+      backgroundColor: Colors.white,
+      // elevation: 0,
+      indicatorColor: tertiary,
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
