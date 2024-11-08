@@ -14,6 +14,9 @@ class DistricService extends ChangeNotifier {
     phone: '',
     email: '',
   );
+  Settings settings = Settings(
+    intervalTimeDevice: '0',
+  );
 
   bool isLoading = true;
   bool isSaving = false;
@@ -21,6 +24,7 @@ class DistricService extends ChangeNotifier {
 
   DistricService() {
     loadDistric();
+    getSettings();
   }
 
   Future updateDistric(Distric distric) async {
@@ -49,5 +53,35 @@ class DistricService extends ChangeNotifier {
 
     isLoading = false;
     notifyListeners();
+  }
+
+  Future getSettings() async {
+    isLoading = true;
+    notifyListeners();
+
+    final url = Uri.http(_baseUrl, 'api/distric/1/get_settings/');
+    final resp = await http.get(url);
+    settings = Settings.fromJson(json.decode(resp.body));
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future updateSettings(Settings settings) async {
+    final url =
+        Uri.http(_baseUrl, 'api/distric/${distric.id}/update_settings/');
+    /* {'Token': await storage.read(key: 'token')} */
+    final resp = await http.put(
+      url,
+      body: settings.toRawJson(),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (resp.statusCode != 200) return false;
+    final settingsResponse = Settings.fromJson(json.decode(resp.body));
+    settings = settingsResponse;
+    notifyListeners();
+    return true;
   }
 }

@@ -5,20 +5,16 @@ class PurchaseFormProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Purchase purchase;
+  bool isLoading = false;
 
   PurchaseFormProvider(this.purchase);
 
-  // updateAvailability(bool value) {
-  //   print(value);
-  //   Purchase.available = value;
-  //   notifyListeners();
-  // }
-
   bool isValidForm() {
-    print(purchase.purchasedDate);
-    print(purchase.total);
-    print(purchase.liters);
-    print(purchase.price);
     return formKey.currentState?.validate() ?? false;
+  }
+
+  void setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
   }
 }

@@ -62,6 +62,9 @@ class _UserInfo extends StatelessWidget {
         _rowInfo(Icons.house, usuario.address),
         const SizedBox(height: 5),
         _rowInfo(Icons.phone, usuario.phone),
+        _rowInfo(Icons.person,
+            '${usuario.ci} - ${usuario.names} ${usuario.lastnames}'),
+        const SizedBox(height: 5),
         // Action Buttons
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

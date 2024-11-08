@@ -47,9 +47,6 @@ class _YearSelectorState extends State<YearSelector> {
         onChanged: (newValue) {
           setState(() {
             selectedYear = newValue;
-            // invoiceService.testInvoice();
-            invoiceService.selectedYear = newValue!;
-            print("Selector: ${invoiceService.selectedYear}");
           });
         },
       ),

@@ -5,7 +5,10 @@ import 'package:facturacion/src/services/services.dart';
 import 'package:provider/provider.dart';
 
 class PurchaseDataTable extends StatefulWidget {
-  const PurchaseDataTable({Key? key}) : super(key: key);
+  final int? year;
+  final bool? reload;
+
+  const PurchaseDataTable({super.key, this.year, this.reload});
 
   @override
   _PurchaseDataTableState createState() => _PurchaseDataTableState();
@@ -17,6 +20,7 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
   bool _isLoading = false;
   bool _hasMoreData = true;
   final List<Purchase> _data = [];
+  int _year = 0;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -47,7 +51,8 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
     final purchaseService =
         Provider.of<PurchaseService>(context, listen: false);
 
-    await purchaseService.getPurchases('', _pageSize, _currentPage);
+    await purchaseService.getPurchases(
+        '', widget.year, _pageSize, _currentPage);
     final newData = purchaseService.purchases;
 
     if (newData.isEmpty) {
@@ -73,6 +78,20 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    if (_year != widget.year && widget.year != null) {
+      _year = widget.year!;
+      _currentPage = 1;
+      _data.clear();
+      _fetchData();
+      setState(() {});
+    }
+
+    if (widget.reload == true) {
+      _currentPage = 1;
+      _data.clear();
+      _fetchData();
+      setState(() {});
+    }
     return Scaffold(
       body: _data.isEmpty && _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -85,7 +104,9 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
                     child: DataTable(
                       headingRowColor:
                           const WidgetStatePropertyAll(AppTheme.primary),
-                      headingRowHeight: 35,
+                      headingRowHeight: 30,
+                      dataRowMaxHeight: 35,
+                      dataRowMinHeight: 20,
                       columnSpacing: 18,
                       columns: const [
                         DataColumn(
@@ -94,24 +115,24 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
                               style: TextStyle(color: AppTheme.harp),
                             ),
                             headingRowAlignment: MainAxisAlignment.center),
-                        DataColumn(
-                            label: Text(
-                              'Cantidad',
-                              style: TextStyle(color: AppTheme.harp),
-                            ),
-                            headingRowAlignment: MainAxisAlignment.center),
+                        // DataColumn(
+                        //     label: Text(
+                        //       'Cantidad',
+                        //       style: TextStyle(color: AppTheme.harp),
+                        //     ),
+                        //     headingRowAlignment: MainAxisAlignment.center),
                         DataColumn(
                             label: Text(
                               'Precio',
                               style: TextStyle(color: AppTheme.harp),
                             ),
                             headingRowAlignment: MainAxisAlignment.center),
-                        DataColumn(
-                            label: Text(
-                              'Total',
-                              style: TextStyle(color: AppTheme.harp),
-                            ),
-                            headingRowAlignment: MainAxisAlignment.center),
+                        // DataColumn(
+                        //     label: Text(
+                        //       'Total',
+                        //       style: TextStyle(color: AppTheme.harp),
+                        //     ),
+                        //     headingRowAlignment: MainAxisAlignment.center),
                         DataColumn(
                             label: Text(
                               'Encargado',
@@ -124,17 +145,17 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
                                 DataCell(Container(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    item.purchasedDate,
+                                    item.formatedPurchasedDate(),
                                     textAlign: TextAlign.center,
                                   ),
                                 )),
-                                DataCell(Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    item.liters,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )),
+                                // DataCell(Container(
+                                //   alignment: Alignment.center,
+                                //   child: Text(
+                                //     item.liters,
+                                //     textAlign: TextAlign.center,
+                                //   ),
+                                // )),
                                 DataCell(Container(
                                   alignment: Alignment.center,
                                   child: Text(
@@ -142,17 +163,17 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
                                     textAlign: TextAlign.center,
                                   ),
                                 )),
+                                // DataCell(Container(
+                                //   alignment: Alignment.center,
+                                //   child: Text(
+                                //     item.total,
+                                //     textAlign: TextAlign.center,
+                                //   ),
+                                // )),
                                 DataCell(Container(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    item.total,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )),
-                                DataCell(Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    item.employee.toString(),
+                                    item.employeeName.toString(),
                                     textAlign: TextAlign.center,
                                   ),
                                 )),

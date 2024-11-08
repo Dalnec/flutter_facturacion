@@ -40,14 +40,25 @@ class CheckAuthScreen extends StatelessWidget {
                     ));
               });
             } else {
-              Future.microtask(() {
-                Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => const MenuScreen(),
-                      transitionDuration: const Duration(seconds: 0),
-                    ));
-              });
+              if (parts[2] == 'COBRADOR') {
+                Future.microtask(() {
+                  Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => const InvoiceScreen(),
+                        transitionDuration: const Duration(seconds: 0),
+                      ));
+                });
+              } else {
+                Future.microtask(() {
+                  Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => const MenuScreen(),
+                        transitionDuration: const Duration(seconds: 0),
+                      ));
+                });
+              }
             }
           }
           return Container();

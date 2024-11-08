@@ -52,8 +52,8 @@ class FormInvoiceScreen extends StatelessWidget {
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.black12,
-                      blurRadius: 15, // soften the shadow
-                      offset: Offset(0, 5), // changes position of shadow
+                      blurRadius: 15,
+                      offset: Offset(0, 5),
                     ),
                   ],
                 ),
@@ -80,6 +80,7 @@ class FormInvoiceScreen extends StatelessWidget {
                 onPressed: !usuario.makeInvoice
                     ? null
                     : () {
+                        // final purchase = Provider.of<PurchaseService>(context, listen: false);
                         FocusScope.of(context).requestFocus(FocusNode());
                         if (!formKey.currentState!.validate()) {
                           print('Formulario no válido');
@@ -89,11 +90,9 @@ class FormInvoiceScreen extends StatelessWidget {
                             DateFormat('yyyy-MM-dd HH:mm:ss')
                                 .format(DateTime.now());
                         invoice.readDate = formattedDate;
-                        invoice.price = '0.35';
-                        final total = double.parse(invoice.measured) *
-                            double.parse(invoice.price);
-                        invoice.total = total.toStringAsFixed(2);
-                        print(invoice.toJson());
+                        // invoice.price = purchase.selectedPurchase.price;
+                        // final total = double.parse(invoice.measured) * double.parse(invoice.price);
+                        // invoice.total = total.toStringAsFixed(2);
 
                         ModularDialog.showModularDialog(
                           context: context,
@@ -120,18 +119,27 @@ class FormInvoiceScreen extends StatelessWidget {
                               onPressed: () async {
                                 final newInvoice = await invoiceService
                                     .saveOrCreateInvoice(invoice);
-                                if (newInvoice != null) {
-                                  invoice.measured = '';
-                                  usuarioService
-                                      .changeStatus(newInvoice.usuario);
-                                  Navigator.of(context).pop();
-                                  // Navigator.pushNamedAndRemoveUntil(
-                                  //   context,
-                                  //   'invoice',
-                                  //   (route) => route.isFirst,
-                                  // );
-                                  uiProvider.selectedMenuOpt = 0;
+                                Navigator.of(context).pop();
+                                if (newInvoice.id == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Error al registrar Lectura')));
+                                  return;
                                 }
+                                invoice.measured = '';
+                                usuarioService.changeStatus(newInvoice.usuario);
+                                // Navigator.pushNamedAndRemoveUntil(
+                                //   context,
+                                //   'invoice',
+                                //   (route) => route.isFirst,
+                                // );
+                                uiProvider.selectedMenuOpt = 0;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Acción realizada correctamente')),
+                                );
                               },
                               child: const Text('Confirmar',
                                   style: TextStyle(color: AppTheme.harp)),

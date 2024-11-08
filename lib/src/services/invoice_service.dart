@@ -34,7 +34,7 @@ class InvoiceService extends ChangeNotifier {
     return newInvoice;
   }
 
-  Future<Invoice> updateInvoice(Invoice invoice) async {
+  Future updateInvoice(Invoice invoice) async {
     // final url = Uri.https(_baseUrl, 'Invoice/${Invoice.id}',
     final url = Uri.http(_baseUrl, 'api/invoice/${invoice.id}/');
     /* {'Token': await storage.read(key: 'token')} */
@@ -45,11 +45,14 @@ class InvoiceService extends ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
-    final decodedData = json.decode(resp.body);
-    final index = invoices.indexWhere((element) => element.id == invoice.id);
-    invoices[index] = invoice;
 
-    return decodedData;
+    if (resp.statusCode == 200) {
+      final decodedData = json.decode(resp.body);
+      final index = invoices.indexWhere((element) => element.id == invoice.id);
+      invoices[index] = invoice;
+      return {"status": true, "invoice": decodedData};
+    }
+    return {"status": false};
   }
 
   Future<Invoice> createInvoice(Invoice invoice) async {
@@ -66,6 +69,9 @@ class InvoiceService extends ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
+    if (resp.statusCode != 201) {
+      return invoice;
+    }
     final decodedData = Invoice.fromRawJson(resp.body);
     return decodedData;
   }
@@ -127,7 +133,6 @@ class InvoiceService extends ChangeNotifier {
 
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/invoice/', params);
-    print(url);
     final resp = await http.get(url);
     final res = json.decode(resp.body);
     if (!res.containsKey('detail')) {
@@ -137,5 +142,22 @@ class InvoiceService extends ChangeNotifier {
     } else {
       invoices = [];
     }
+  }
+
+  Future updateStatusInvoice(Invoice invoice) async {
+    final url = Uri.http(_baseUrl, 'api/invoice/${invoice.id}/change_status/');
+    final resp = await http.put(
+      url,
+      body: '{"status": "${invoice.status}"}',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (resp.statusCode == 200) {
+      final index = invoices.indexWhere((element) => element.id == invoice.id);
+      invoices[index].status = 'P';
+      return true;
+    }
+    return false;
   }
 }

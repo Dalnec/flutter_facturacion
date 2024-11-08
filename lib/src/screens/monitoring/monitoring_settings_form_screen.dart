@@ -1,48 +1,47 @@
+import 'package:facturacion/src/providers/form_settings_provider.dart';
 import 'package:facturacion/src/themes/theme.dart';
 import 'package:facturacion/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:facturacion/src/providers/form_purchase_provider.dart';
 import 'package:facturacion/src/services/services.dart';
 
-class PurchaseFormScreen extends StatelessWidget {
-  const PurchaseFormScreen({super.key});
+class MonitoringSettingsFormScreen extends StatelessWidget {
+  const MonitoringSettingsFormScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final purchaseService = Provider.of<PurchaseService>(context);
+    final districService = Provider.of<DistricService>(context);
 
     return ChangeNotifierProvider(
-        create: (_) => PurchaseFormProvider(purchaseService.selectedPurchase),
-        child: _PurchaseFormProviderBody(purchaseService: purchaseService));
+        create: (_) => SettingsFormProvider(districService.settings),
+        child: _SettingsFormBody(districService: districService));
   }
 }
 
-class _PurchaseFormProviderBody extends StatelessWidget {
-  final TextEditingController _dateController = TextEditingController();
-  final PurchaseService purchaseService;
+class _SettingsFormBody extends StatelessWidget {
+  final DistricService districService;
 
-  _PurchaseFormProviderBody({
+  const _SettingsFormBody({
     super.key,
-    required this.purchaseService,
+    required this.districService,
   });
 
   @override
   Widget build(BuildContext context) {
-    final purchaseForm = Provider.of<PurchaseFormProvider>(context);
-    final purchase = purchaseForm.purchase;
-    bool isLoading = false;
+    final settingsForm =
+        Provider.of<SettingsFormProvider>(context, listen: false);
+    final settings = settingsForm.settings;
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Tarifas'),
+          title: const Text('Configuracion Monitoreo'),
         ),
         body: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Form(
-            key: purchaseForm.formKey,
+            key: settingsForm.formKey,
             child: Column(
               children: [
                 Card(
@@ -57,92 +56,42 @@ class _PurchaseFormProviderBody extends StatelessWidget {
                           children: [
                             Text(
                               // 'Datos de Compra:',
-                              'Registrar Nueva Tarifa',
+                              'Editar Datos',
                               style: TextStyle(fontSize: 18),
                             ),
                           ],
                         ),
-                        // const SizedBox(height: 10),
-                        // TextField(
-                        //   controller: _dateController,
-                        //   keyboardType: TextInputType.datetime,
-                        //   decoration: const InputDecoration(
-                        //     labelText: 'Fecha de Compra',
-                        //     helperText: 'Fecha',
-                        //     prefixIcon: Icon(Icons.calendar_today,
-                        //         color: AppTheme.primary),
-                        //   ),
-                        //   onTap: () async {
-                        //     final actualDate = DateTime.now();
-                        //     DateTime? pickedDate = await showDatePicker(
-                        //       context: context,
-                        //       initialDate: actualDate,
-                        //       firstDate: DateTime(2020),
-                        //       lastDate: DateTime(actualDate.year,
-                        //           actualDate.month, actualDate.day),
-                        //     );
-                        //     if (pickedDate != null) {
-                        //       // _dateController.text =
-                        //       //     pickedDate.toIso8601String();
-                        //       _dateController.text =
-                        //           DateFormat('yyyy-MM-dd').format(pickedDate);
-                        //     }
-                        //   },
-                        // ),
                         const SizedBox(height: 15),
                         CustomInputField(
-                          labelText: 'Precio',
-                          helperText: 'Ingresar Precio',
-                          prefixIcon: Icons.price_change_outlined,
-                          formProperty: 'price',
-                          initialValue: purchase.price,
-                          onChanged: (value) => purchase.price = value,
+                          labelText: 'Intervalo de Envio',
+                          helperText: 'Ingresar Tiempo en segundos o minutos',
+                          prefixIcon: Icons.timer_outlined,
+                          formProperty: 'intervalTimeDevice',
+                          initialValue: (int.parse(
+                                      settings.intervalTimeDevice ?? '600000') /
+                                  60000)
+                              .toStringAsFixed(2),
+                          onChanged: (value) =>
+                              settings.intervalTimeDevice = value,
                           length: 1,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
-                                RegExp(r'^(\d+)?\.?\d{0,2}'))
+                                RegExp(r'^(\d+)?\d{0,9}'))
                           ],
                         ),
-                        // const SizedBox(height: 10),
-                        // CustomInputField(
-                        //   labelText: 'Litros',
-                        //   helperText: 'Ingresar Litros',
-                        //   prefixIcon: Icons.water_drop_outlined,
-                        //   formProperty: 'liters',
-                        //   initialValue: purchase.liters,
-                        //   onChanged: (value) => purchase.liters = value,
-                        // ),
-                        // const SizedBox(height: 10),
-                        // CustomInputField(
-                        //   labelText: 'Total',
-                        //   helperText: 'Total de compra',
-                        //   prefixIcon: Icons.monetization_on_outlined,
-                        //   formProperty: 'total',
-                        //   initialValue: purchase.total,
-                        //   onChanged: (value) => purchase.total = value,
-                        // ),
                         const SizedBox(height: 10),
-                        CustomInputField(
-                          labelText: 'Observaciones',
-                          helperText: '',
-                          prefixIcon: Icons.comment_outlined,
-                          formProperty: 'observations',
-                          initialValue: purchase.observations,
-                          onChanged: (value) => purchase.observations = value,
-                          length: 0,
-                          maxLines: null,
-                        ),
+                        RadioTimer(),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: purchaseForm.isLoading
+                  onPressed: settingsForm.isLoading
                       ? null
                       : () async {
                           FocusScope.of(context).requestFocus(FocusNode());
-                          if (!purchaseForm.isValidForm()) {
+                          if (!settingsForm.isValidForm()) {
                             print('Formulario no válido');
                             return;
                           }
@@ -153,7 +102,7 @@ class _PurchaseFormProviderBody extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Text(
-                                  '¿Desea registrar esta tarifa?',
+                                  '¿Desea actualizar este valor?',
                                   style: TextStyle(fontSize: 16),
                                 ),
                               ],
@@ -167,13 +116,26 @@ class _PurchaseFormProviderBody extends StatelessWidget {
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  purchaseForm.setLoading(true);
+                                  settingsForm.setLoading(true);
                                   Navigator.of(context).pop();
                                   await Future.delayed(
                                       const Duration(seconds: 1));
-                                  final resp = await purchaseService
-                                      .createPurchase(purchase);
-                                  purchaseForm.setLoading(false);
+                                  if (settingsForm.timerInterval == 'min') {
+                                    settings.intervalTimeDevice = (int.parse(
+                                                settings.intervalTimeDevice ??
+                                                    '10') *
+                                            60000)
+                                        .toString();
+                                  } else {
+                                    settings.intervalTimeDevice = (int.parse(
+                                                settings.intervalTimeDevice ??
+                                                    '10') *
+                                            1000)
+                                        .toString();
+                                  }
+                                  final resp = await districService
+                                      .updateSettings(settings);
+                                  settingsForm.setLoading(false);
                                   if (!resp) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -198,7 +160,7 @@ class _PurchaseFormProviderBody extends StatelessWidget {
                   child: SizedBox(
                       width: double.infinity,
                       child: Center(
-                          child: purchaseForm.isLoading
+                          child: settingsForm.isLoading
                               ? SizedBox(
                                   width: 24,
                                   height: 24,
@@ -214,5 +176,55 @@ class _PurchaseFormProviderBody extends StatelessWidget {
             ),
           ),
         )));
+  }
+}
+
+enum TimerType { segundos, minutos }
+
+class RadioTimer extends StatefulWidget {
+  const RadioTimer({super.key});
+
+  @override
+  State<RadioTimer> createState() => _RadioTimerState();
+}
+
+class _RadioTimerState extends State<RadioTimer> {
+  TimerType? _character = TimerType.minutos;
+
+  @override
+  Widget build(BuildContext context) {
+    final settingsForm =
+        Provider.of<SettingsFormProvider>(context, listen: false);
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: const Text('Segundos'),
+          leading: Radio<TimerType>(
+            value: TimerType.segundos,
+            groupValue: _character,
+            onChanged: (TimerType? value) {
+              setState(() {
+                print("value $value");
+                _character = value;
+                settingsForm.setTimerInterval('sec');
+              });
+            },
+          ),
+        ),
+        ListTile(
+          title: const Text('Minutos'),
+          leading: Radio<TimerType>(
+            value: TimerType.minutos,
+            groupValue: _character,
+            onChanged: (TimerType? value) {
+              setState(() {
+                _character = value;
+                settingsForm.setTimerInterval('min');
+              });
+            },
+          ),
+        ),
+      ],
+    );
   }
 }

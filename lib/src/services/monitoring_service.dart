@@ -10,11 +10,13 @@ class MonitoringService extends ChangeNotifier {
 
   List<Monitoring> monitorings = [];
   Monitoring lastMonitoring = Monitoring(
-      readDate: '',
-      measured: '',
-      status: '',
-      percentage: '',
-      isConnected: false);
+    readDate: '',
+    measured: '',
+    status: '',
+    percentage: '',
+    isConnected: false,
+    battery: '',
+  );
   MonitoringResponse response = MonitoringResponse(count: 0, results: []);
   late Monitoring selectedMonitoring;
   bool isLoading = true;
@@ -28,14 +30,14 @@ class MonitoringService extends ChangeNotifier {
   }
 
   Future getMonitorings(String? search,
-      [int pageSize = 10, int page = 1]) async {
+      [int pageSize = 10, int page = 1, ordering = "-id"]) async {
     final Map<String, dynamic> params = {
       'page_size': '$pageSize',
       'page': '$page',
       'search': search,
+      'ordering': ordering,
     };
 
-    // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/monitoring/', params);
     final resp = await http.get(url);
     final res = json.decode(resp.body);
@@ -66,7 +68,7 @@ class MonitoringService extends ChangeNotifier {
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/monitoring/', params);
     final resp = await http.get(url);
-    print(resp.body);
+    // print(resp.body);
     response = MonitoringResponse.fromJson(json.decode(resp.body));
     monitorings = response.results;
     isLoading = false;
@@ -77,7 +79,25 @@ class MonitoringService extends ChangeNotifier {
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/monitoring/get_last/');
     final resp = await http.get(url);
+    // print(resp.body);
     lastMonitoring = Monitoring.fromJson(json.decode(resp.body));
     notifyListeners();
+  }
+
+  Future getMonitoringsNoPagination(String dateAfter, String dateBefore,
+      [ordering = "-id"]) async {
+    final Map<String, dynamic> params = {
+      'read_date_range_after': dateAfter,
+      'read_date_range_before': dateBefore,
+      'ordering': ordering,
+    };
+
+    final url = Uri.http(_baseUrl, '/api/monitoring/get_monitorings/', params);
+    final resp = await http.get(url);
+    final List<Monitoring> listMonitorings = [];
+    for (var item in json.decode(resp.body)) {
+      listMonitorings.add(Monitoring.fromJson(item));
+    }
+    return listMonitorings;
   }
 }

@@ -101,6 +101,20 @@ class AppTheme {
       // elevation: 0,
       indicatorColor: tertiary,
     ),
+    sliderTheme: const SliderThemeData(
+      activeTrackColor: primary,
+      inactiveTrackColor: Colors.grey,
+      thumbColor: primary,
+      overlayColor: secondary,
+      thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
+      overlayShape: RoundSliderOverlayShape(overlayRadius: 24.0),
+      valueIndicatorColor: primary,
+      valueIndicatorTextStyle: TextStyle(color: Colors.white),
+    ),
+    radioTheme: const RadioThemeData(
+      fillColor: WidgetStatePropertyAll(primary),
+      overlayColor: WidgetStatePropertyAll(secondary),
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData.dark().copyWith(

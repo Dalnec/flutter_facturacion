@@ -11,7 +11,8 @@ class PurchaseService extends ChangeNotifier {
   List<Purchase> purchases = [];
   PurchaseResponse response = PurchaseResponse(count: 0, results: []);
   late Purchase selectedPurchase;
-  bool isLoading = true;
+  late Purchase lastPurchase;
+  bool isLoading = false;
   bool isSaving = false;
   int _page = 0;
   int _count = 0;
@@ -21,11 +22,14 @@ class PurchaseService extends ChangeNotifier {
     // getPurchases('');
   }
 
-  Future getPurchases(String? search, [int pageSize = 10, int page = 1]) async {
+  Future getPurchases(String? search, int? year,
+      [int pageSize = 10, int page = 1, ordering = "-id"]) async {
     final Map<String, dynamic> params = {
       'page_size': '$pageSize',
       'page': '$page',
       'search': search,
+      'year': year != null ? '$year' : '',
+      'ordering': ordering,
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
@@ -59,7 +63,6 @@ class PurchaseService extends ChangeNotifier {
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/purchase/', params);
     final resp = await http.get(url);
-    print(resp.body);
     response = PurchaseResponse.fromJson(json.decode(resp.body));
     purchases = response.results;
     isLoading = false;
@@ -67,21 +70,29 @@ class PurchaseService extends ChangeNotifier {
   }
 
   Future createPurchase(Purchase purchase) async {
-    isLoading = true;
-    notifyListeners();
-
+    purchase.purchasedDate = purchase.getActualDateTime();
+    purchase.employee = int.parse('${await storage.read(key: 'employee')}');
     final url = Uri.http(_baseUrl, '/api/purchase/');
     final resp = await http.post(
       url,
-      body: purchase.toJson(),
+      body: purchase.toRawJson(),
       headers: {
         'Content-Type': 'application/json',
       },
     );
-    print(resp.body);
-    response = PurchaseResponse.fromJson(json.decode(resp.body));
-    purchases = response.results;
-    isLoading = false;
+    return resp.statusCode == 201 ? true : false;
+  }
+
+  Future getLastPurchase() async {
+    final url = Uri.http(_baseUrl, '/api/purchase/get_last_purchase/');
+    final resp = await http.get(url);
+    if (resp.statusCode != 200) {
+      lastPurchase =
+          Purchase(purchasedDate: '', price: '', employee: 0, employeeName: '');
+      return;
+    }
+    lastPurchase = Purchase.fromJson(json.decode(resp.body));
+
     notifyListeners();
   }
 }

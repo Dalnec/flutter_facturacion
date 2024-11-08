@@ -47,7 +47,7 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
     super.dispose();
   }
 
-  Future<void> _fetchData([bool isfilter = false]) async {
+  Future<void> _fetchData() async {
     setState(() {
       _isLoading = true;
     });
@@ -94,7 +94,7 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
   Widget build(BuildContext context) {
     if (_year != widget.year && widget.year != null) {
       _year = widget.year!;
-      _fetchData(true);
+      _fetchData();
       _data.clear();
       _currentPage = 1;
       setState(() {});
@@ -141,17 +141,24 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
                     ],
                     rows: _data
                         .map((item) => DataRow(
-                                onSelectChanged: (value) {
-                                  Navigator.push(
+                                onSelectChanged: (value) async {
+                                  final result = await Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => TicketScreen(
+                                        invoice: item,
                                         data: item.ticket,
                                         status: item.status,
                                         profile: _profile,
                                       ),
                                     ),
                                   );
+                                  if (result != null && result == 'reload') {
+                                    setState(() {
+                                      print("Datos recargados");
+                                      _fetchData();
+                                    });
+                                  }
                                 },
                                 cells: [
                                   DataCell(Container(

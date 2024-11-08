@@ -110,7 +110,13 @@ class _LoginForm extends StatelessWidget {
                           if (authService.user['profile_description'] ==
                               'USUARIO') {
                             Navigator.pushReplacementNamed(context, 'userinfo');
-                          } else {
+                          }
+                          if (authService.user['profile_description'] ==
+                              'COBRADOR') {
+                            Navigator.pushReplacementNamed(context, 'invoice');
+                          }
+                          if (authService.user['profile_description'] ==
+                              'ADMINISTRADOR') {
                             Navigator.pushReplacementNamed(context, 'menu');
                           }
                         } else {

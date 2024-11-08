@@ -16,6 +16,7 @@ class Usuario {
   String address;
   String status;
   int? user;
+  int? profile;
   int employee;
   String? username;
   String? password;
@@ -36,6 +37,7 @@ class Usuario {
     required this.address,
     required this.status,
     this.user,
+    this.profile,
     required this.employee,
     this.hasDebt,
     required this.makeInvoice,
@@ -55,6 +57,7 @@ class Usuario {
         address: json["address"],
         status: json["status"],
         user: json["user"],
+        profile: json["profile"],
         employee: json["employee"],
         hasDebt: json["hasDebt"],
         makeInvoice: json["makeInvoice"],
@@ -77,6 +80,7 @@ class Usuario {
         "address": address,
         "status": status,
         "user": user,
+        "profile": profile,
         "employee": employee,
         "username": username,
         "password": password,
@@ -98,6 +102,7 @@ class Usuario {
         address: address,
         status: status,
         user: user,
+        profile: profile,
         employee: employee,
         hasDebt: hasDebt,
         makeInvoice: makeInvoice,

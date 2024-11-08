@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class Monitoring {
   int? id;
@@ -10,6 +11,7 @@ class Monitoring {
   String? observations;
   String percentage;
   bool isConnected;
+  String battery;
 
   Monitoring({
     this.id,
@@ -21,7 +23,14 @@ class Monitoring {
     this.observations,
     required this.percentage,
     required this.isConnected,
+    required this.battery,
   });
+
+  String formatedReadDate() {
+    DateTime parsedDate = DateTime.parse(readDate);
+    String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(parsedDate);
+    return formattedDate;
+  }
 
   factory Monitoring.fromRawJson(String str) =>
       Monitoring.fromJson(json.decode(str));
@@ -38,6 +47,7 @@ class Monitoring {
         observations: json["observations"],
         percentage: json["percentage"],
         isConnected: json["isConnected"],
+        battery: json["battery"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -50,5 +60,6 @@ class Monitoring {
         "observations": observations,
         "percentage": percentage,
         "isConnected": isConnected,
+        "battery": battery,
       };
 }

@@ -15,25 +15,28 @@ class WaterTankLevel extends StatefulWidget {
 class _WaterTankLevelState extends State<WaterTankLevel>
     with SingleTickerProviderStateMixin {
   final List<double> waterLevels = [0.1, 0.5, 0.8, 0.3, 0.7, 1.0, 0.4];
-  // int currentIndex = 0;
+  int initCount = 0;
+  bool initLoading = false;
   double currentWaterLevel = 0.0;
   late Timer _timer;
   late AnimationController _waveController;
   bool _isLoading = false;
   Monitoring _dataCard = Monitoring(
-      readDate: '',
-      measured: '',
-      status: '',
-      percentage: '',
-      isConnected: false);
+    readDate: '',
+    measured: '',
+    status: '',
+    percentage: '',
+    isConnected: false,
+    battery: '',
+  );
 
   @override
   void initState() {
     super.initState();
     _waveController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat(); // Repetir la animación de las olas indefinidamente
+      duration: const Duration(seconds: 5),
+    )..repeat(); // Repetir la animación
     _fetchData();
     _startWaterLevelSimulation();
   }
@@ -55,12 +58,16 @@ class _WaterTankLevelState extends State<WaterTankLevel>
       // });
       // currentWaterLevel = double.parse(_dataCard.percentage) / 100;
       // setState(() {});
-      print(currentWaterLevel);
+      // print(currentWaterLevel);
     });
   }
 
   Future<void> _fetchData() async {
     setState(() {
+      if (initCount == 0) {
+        initLoading = true;
+        initCount++;
+      }
       _isLoading = true;
     });
     final monitoringService =
@@ -69,7 +76,10 @@ class _WaterTankLevelState extends State<WaterTankLevel>
     _dataCard = monitoringService.lastMonitoring;
     currentWaterLevel = double.parse(_dataCard.percentage) / 100;
     _isLoading = false;
-    setState(() {});
+    initLoading = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -86,7 +96,7 @@ class _WaterTankLevelState extends State<WaterTankLevel>
               children: [
                 Container(
                   width: 120,
-                  height: 180,
+                  height: 170,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.blueAccent, width: 3),
                     borderRadius: const BorderRadius.vertical(
@@ -142,12 +152,14 @@ class _WaterTankLevelState extends State<WaterTankLevel>
               ],
             ),
           ),
-          InfoDisplay(
-            // currentWaterLevel: (currentWaterLevel * 100).toStringAsFixed(0),
-            currentWaterLevel: _dataCard.percentage,
-            lastUpdate: _dataCard.readDate,
-            isConnected: _dataCard.isConnected,
-          )
+          initLoading
+              ? Center(child: CircularProgressIndicator())
+              : InfoDisplay(
+                  currentWaterLevel: _dataCard.percentage,
+                  lastUpdate: _dataCard.readDate,
+                  isConnected: _dataCard.isConnected,
+                  batteryLevel: _dataCard.battery,
+                )
         ],
       ),
     );
@@ -158,12 +170,14 @@ class InfoDisplay extends StatelessWidget {
   final String currentWaterLevel;
   final String lastUpdate;
   final bool isConnected;
+  final String batteryLevel;
 
   const InfoDisplay({
     super.key,
     required this.currentWaterLevel,
     required this.lastUpdate,
     required this.isConnected,
+    required this.batteryLevel,
   });
 
   @override
@@ -188,12 +202,11 @@ class InfoDisplay extends StatelessWidget {
         children: [
           // Nivel de Agua
           _InfoDetail(
-              // icon: Icons.water,
               icon: Icons.water_drop_outlined,
               color: Colors.blue,
               label: 'Nivel de Agua',
               value: '$currentWaterLevel%'),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
           // Última Actualización
           _InfoDetail(
             icon: Icons.update,
@@ -201,7 +214,7 @@ class InfoDisplay extends StatelessWidget {
             label: 'Última Actualización',
             value: lastUpdate,
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
           // Estado del Dispositivo
           if (isConnected)
             _InfoDetail(
@@ -219,6 +232,16 @@ class InfoDisplay extends StatelessWidget {
               value: 'DESCONECTADO',
               textColor: Colors.red,
             ),
+          const SizedBox(height: 10),
+          isConnected
+              ? _batteryLevelInfo(batteryLevel)
+              : _InfoDetail(
+                  icon: Icons.battery_unknown_outlined,
+                  color: Colors.red,
+                  label: 'Nivel Bateria',
+                  value: '-',
+                  textColor: Colors.red,
+                ),
         ],
       ),
     );
@@ -270,6 +293,48 @@ class _InfoDetail extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget _batteryLevelInfo(String batteryLevel) {
+  IconData batteryIcon = Icons.battery_0_bar_outlined;
+  Color batteryColor = Colors.red;
+  int batteryLevelInt = batteryLevel.isEmpty ? 0 : int.parse(batteryLevel);
+  if (batteryLevelInt == 100) {
+    batteryIcon = Icons.battery_charging_full_outlined;
+    batteryColor = Colors.green;
+  }
+  if (batteryLevelInt < 100 && batteryLevelInt > 95) {
+    batteryIcon = Icons.battery_6_bar_outlined;
+    batteryColor = Colors.green;
+  }
+  if (batteryLevelInt <= 95 && batteryLevelInt > 75) {
+    batteryIcon = Icons.battery_6_bar_outlined;
+    batteryColor = Colors.green.shade400;
+  }
+  if (batteryLevelInt <= 75 && batteryLevelInt > 60) {
+    batteryIcon = Icons.battery_5_bar_outlined;
+    batteryColor = Colors.green.shade600;
+  }
+  if (batteryLevelInt <= 60 && batteryLevelInt > 50) {
+    batteryIcon = Icons.battery_3_bar_outlined;
+    batteryColor = Colors.green.shade800;
+  }
+  if (batteryLevelInt <= 50 && batteryLevelInt > 25) {
+    batteryIcon = Icons.battery_2_bar_outlined;
+    batteryColor = Colors.orange.shade700;
+  }
+  if (batteryLevelInt <= 25 && batteryLevelInt >= 0) {
+    batteryIcon = Icons.battery_0_bar_outlined;
+    batteryColor = Colors.red.shade400;
+  }
+
+  return _InfoDetail(
+    icon: batteryIcon,
+    color: batteryColor,
+    label: 'Nivel Bateria',
+    value: '$batteryLevel%',
+    textColor: batteryColor,
+  );
 }
 
 class WavePainter extends CustomPainter {

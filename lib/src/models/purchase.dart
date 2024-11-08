@@ -1,29 +1,53 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class Purchase {
   int? id;
   DateTime? created;
   DateTime? modified;
   String purchasedDate;
-  String total;
-  String liters;
+  String? total;
+  String? liters;
   bool? active;
   String price;
   String? observations;
   int employee;
+  String employeeName;
 
   Purchase({
     this.id,
     this.created,
     this.modified,
     required this.purchasedDate,
-    required this.total,
-    required this.liters,
+    this.total,
+    this.liters,
     this.active,
     required this.price,
     this.observations,
     required this.employee,
+    required this.employeeName,
   });
+
+  int getMonth() {
+    DateTime parsedDate = DateTime.parse(purchasedDate);
+    return parsedDate.month - 1;
+  }
+
+  String formatedPurchasedDate() {
+    // Parsear la cadena de fecha al objeto DateTime
+    DateTime parsedDate = DateTime.parse(purchasedDate);
+
+    // Formatear la fecha al formato deseado
+    String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(parsedDate);
+
+    return formattedDate;
+  }
+
+  String getActualDateTime() {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+    return formattedDate;
+  }
 
   factory Purchase.fromRawJson(String str) =>
       Purchase.fromJson(json.decode(str));
@@ -41,6 +65,7 @@ class Purchase {
         price: json["price"],
         observations: json["observations"],
         employee: json["employee"],
+        employeeName: json["employee_name"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -54,5 +79,6 @@ class Purchase {
         "price": price,
         "observations": observations,
         "employee": employee,
+        "employee_name": employeeName,
       };
 }

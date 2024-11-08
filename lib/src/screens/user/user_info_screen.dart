@@ -77,7 +77,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  'Bienvenido, ${usuarioService.selectedUsuario.names}!',
+                  'Bienvenido(a), ${usuarioService.selectedUsuario.names}!',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ],

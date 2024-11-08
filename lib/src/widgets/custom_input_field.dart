@@ -13,6 +13,7 @@ class CustomInputField extends StatelessWidget {
   final bool obscureText;
   final bool? enabled;
   final int? length;
+  final int? maxLines;
 
   final String? initialValue;
   final String formProperty;
@@ -35,6 +36,7 @@ class CustomInputField extends StatelessWidget {
     this.formValues,
     this.initialValue,
     this.length = 3,
+    this.maxLines = 1,
     this.onChanged,
     this.inputFormatters,
     this.enabled,
@@ -46,6 +48,7 @@ class CustomInputField extends StatelessWidget {
     return TextFormField(
       enabled: enabled ?? true,
       autofocus: false,
+      maxLines: maxLines,
       initialValue: initialValue,
       textCapitalization: TextCapitalization.words,
       keyboardType: keyboardType,

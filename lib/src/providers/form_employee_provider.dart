@@ -1,18 +1,15 @@
-import 'package:facturacion/src/models/models.dart' show Usuario;
+import 'package:facturacion/src/models/models.dart' show Employee;
 import 'package:flutter/material.dart';
 
-class UsuarioFormProvider extends ChangeNotifier {
+class EmployeeFormProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Usuario usuario;
+  Employee employee;
   bool isLoading = false;
 
-  UsuarioFormProvider(this.usuario);
+  EmployeeFormProvider(this.employee);
 
   bool isValidForm() {
-    print(usuario.names);
-    print(usuario.lastnames);
-    print(usuario.status);
     return formKey.currentState?.validate() ?? false;
   }
 

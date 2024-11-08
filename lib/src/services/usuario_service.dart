@@ -30,7 +30,7 @@ class UsuarioService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
   UsuarioService() {
-    getUsuarios('');
+    getUsuarios('', null, null);
   }
 
   Future saveOrCreateUsuario(Usuario usuario) async {
@@ -70,6 +70,7 @@ class UsuarioService extends ChangeNotifier {
     /* {'Token': await storage.read(key: 'token')} */
     usuario.username = usuario.ci.toString();
     usuario.password = usuario.ci.toString();
+    usuario.profile = 3;
     final employee = await storage.read(key: 'employee');
     usuario.employee = int.parse(employee!);
 
@@ -86,7 +87,8 @@ class UsuarioService extends ChangeNotifier {
     return usuario.id.toString();
   }
 
-  Future getUsuarios(String? search, [int pageSize = 20, int page = 1]) async {
+  Future getUsuarios(String? search, bool? hasDebt, bool? makeInvoice,
+      [int pageSize = 20, int page = 1]) async {
     isLoading = true;
     _page = page;
     notifyListeners();
@@ -94,10 +96,13 @@ class UsuarioService extends ChangeNotifier {
       'page_size': '$pageSize',
       'page': '$page',
       'search': search,
+      'hasDebt': '$hasDebt',
+      'makeInvoice': '$makeInvoice',
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
     final url = Uri.http(_baseUrl, '/api/usuario/', params);
+    // print('getUsuarios: $url');
     final resp = await http.get(url);
     final usuarioResponse = UsuarioResponse.fromJson(json.decode(resp.body));
     _count = usuarioResponse.count;
@@ -122,17 +127,22 @@ class UsuarioService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future loadMoreUsuarios(String? search) async {
+  Future loadMoreUsuarios(
+      String? search, bool? hasDebt, bool? makeInvoice) async {
     _page++;
     notifyListeners();
     final Map<String, dynamic> params = {
       'page_size': '20',
       'page': '$_page',
       'search': search,
+      'hasDebt': hasDebt,
+      'makeInvoice': makeInvoice,
     };
     if (_count > usuarios.length) {
       // final url = Uri.https(_baseUrl, '/api/login/');
       final url = Uri.http(_baseUrl, '/api/usuario/', params);
+      // print('loadMoreUsuarios: $url');
+
       final resp = await http.get(url);
       final usuarioResponse = UsuarioResponse.fromJson(json.decode(resp.body));
       usuarios = [...usuarios, ...usuarioResponse.results];
@@ -149,6 +159,14 @@ class UsuarioService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void changeStatusPayment(int id) async {
+    await getUsuario('$id');
+    final index = usuarios.indexWhere((element) => element.id == id);
+    usuarios[index].hasDebt = selectedUsuario.hasDebt;
+    usuarios[index].makeInvoice = selectedUsuario.makeInvoice;
+    notifyListeners();
+  }
+
   Future<bool> changePassword(String id, String password) async {
     final url = Uri.http(_baseUrl, 'api/usuario/$id/change_password/');
     final resp = await http.put(
@@ -158,7 +176,7 @@ class UsuarioService extends ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
-    print(resp.statusCode);
+    // print(resp.statusCode);
     return resp.statusCode == 201 ? true : false;
   }
 }

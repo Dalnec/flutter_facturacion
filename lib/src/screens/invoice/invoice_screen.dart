@@ -1,4 +1,5 @@
-import 'package:facturacion/src/services/services.dart' show UsuarioService;
+import 'package:facturacion/src/services/services.dart'
+    show UsuarioService, AuthService;
 import 'package:facturacion/src/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:facturacion/src/widgets/widgets.dart';
@@ -17,6 +18,15 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
 
+  // Lista de tags
+  final List<String> tags = ['Deuda', 'Facturar', 'Todos'];
+
+  // Mantiene el estado de selección de cada tag
+  List<bool> _isSelected = [false, false, true];
+  final Map<String, dynamic> filterParams = {
+    'hasDebt': null,
+    'makeInvoice': null,
+  };
   final Map<String, String> formValues = {
     'measure': '0',
   };
@@ -27,6 +37,9 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     _scrollController.addListener(_onScroll);
     _searchController.addListener(() {
       setState(() {});
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initFetchData();
     });
   }
 
@@ -51,10 +64,37 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     setState(() {
       _isLoadingMore = true;
     });
-    await usuarioService.loadMoreUsuarios(_searchController.text);
+    await usuarioService.loadMoreUsuarios(_searchController.text,
+        filterParams['hasDebt'], filterParams['makeInvoice']);
     setState(() {
       _isLoadingMore = false;
     });
+  }
+
+  Future<void> _initFetchData() async {
+    final usuarioService = Provider.of<UsuarioService>(context, listen: false);
+    await usuarioService.getUsuarios(
+        '', filterParams['hasDebt'], filterParams['makeInvoice']);
+  }
+
+  void setfiltersParams() {
+    if (_isSelected[0] == true) {
+      filterParams['hasDebt'] = true;
+    } else {
+      filterParams['hasDebt'] = false;
+    }
+    if (_isSelected[1] == true) {
+      filterParams['makeInvoice'] = true;
+    } else {
+      filterParams['makeInvoice'] = false;
+    }
+    if (_isSelected[2] == true) {
+      filterParams['hasDebt'] = null;
+      filterParams['makeInvoice'] = null;
+      _isSelected = [false, false, true];
+    }
+    _initFetchData();
+    setState(() {});
   }
 
   @override
@@ -63,6 +103,46 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Generar Factura"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                ModularDialog.showModularDialog(
+                  context: context,
+                  title: 'Confirmar Acción',
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        '¿Desea Cerrar Sesión?',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancelar'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await Future.delayed(const Duration(seconds: 1));
+                        Provider.of<AuthService>(context, listen: false)
+                            .logout();
+                        Navigator.pushReplacementNamed(context, 'login');
+                      },
+                      child: const Text('Confirmar',
+                          style: TextStyle(color: AppTheme.harp)),
+                    ),
+                  ],
+                );
+              },
+              icon: const Icon(
+                Icons.logout_outlined,
+                color: Colors.white,
+              ))
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -82,57 +162,83 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                               icon: const Icon(Icons.clear),
                               onPressed: () {
                                 _searchController.clear();
-                                usuarioService.getUsuarios('');
+                                usuarioService.getUsuarios('', null, null);
                                 setState(() {});
                               },
                             ),
-                      // hintText: 'Buscar...',
-                      labelText: 'Buscar',
+                      labelText: 'Buscar...',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.search),
                         onPressed: () {
                           _scrollController.jumpTo(0);
-                          usuarioService.getUsuarios(_searchController.text);
+                          usuarioService.getUsuarios(
+                              _searchController.text, null, null);
                         },
                       ),
                     ),
                     onSubmitted: (value) {
                       _scrollController.jumpTo(0);
-                      usuarioService.getUsuarios(_searchController.text);
+                      usuarioService.getUsuarios(
+                          _searchController.text, null, null);
                     },
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: List<Widget>.generate(tags.length, (int index) {
+                      return ChoiceChip(
+                        label: Text(tags[index]),
+                        selected: _isSelected[index],
+                        onSelected: (bool selected) {
+                          setState(() {
+                            _isSelected[index] = selected;
+                            setfiltersParams();
+                          });
+                        },
+                      );
+                    }),
+                  ),
+                ),
+              ],
+            ),
             Expanded(
               // ListView para mostrar los resultados
               child: RefreshIndicator(
                 color: AppTheme.primary,
                 backgroundColor: Colors.white.withOpacity(0.7),
                 onRefresh: () {
-                  return usuarioService.getUsuarios('');
+                  return usuarioService.getUsuarios('', null, null);
                 },
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount:
-                      usuarioService.usuarios.length + (_isLoadingMore ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == usuarioService.usuarios.length) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Center(
-                            child: CircularProgressIndicator(
-                          color: AppTheme.primary,
-                        )),
-                      );
-                    }
-                    // TODO: Mostrar ultimo mes deuda
-                    return UserCardInvoiceInfo(
-                        usuario: usuarioService.usuarios[index],
-                        service: usuarioService);
-                  },
-                ),
+                child: usuarioService.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        controller: _scrollController,
+                        itemCount: usuarioService.usuarios.length +
+                            (_isLoadingMore ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == usuarioService.usuarios.length) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                color: AppTheme.primary,
+                              )),
+                            );
+                          }
+                          // TODO: Mostrar ultimo mes deuda
+                          return UserCardInvoiceInfo(
+                              usuario: usuarioService.usuarios[index],
+                              service: usuarioService);
+                        },
+                      ),
               ),
             ),
           ],

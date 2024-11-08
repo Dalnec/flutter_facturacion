@@ -1,76 +1,48 @@
-import 'package:facturacion/src/providers/form_usuario_provider.dart';
-import 'package:facturacion/src/themes/theme.dart';
-import 'package:facturacion/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:facturacion/src/themes/theme.dart';
+import 'package:facturacion/src/widgets/widgets.dart';
 import 'package:facturacion/src/services/services.dart';
-import 'package:facturacion/src/widgets/custom_input_field.dart';
+import 'package:facturacion/src/providers/form_employee_provider.dart';
 
-class UserFormScreen extends StatelessWidget {
-  const UserFormScreen({super.key});
+class EmployeeFormScreen extends StatelessWidget {
+  const EmployeeFormScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final usuarioService = Provider.of<UsuarioService>(context);
+    final employeeService = Provider.of<EmployeeService>(context);
 
     return ChangeNotifierProvider(
-        create: (_) => UsuarioFormProvider(usuarioService.selectedUsuario),
-        child: _UserFormProviderBody(usuarioService: usuarioService));
+        create: (_) => EmployeeFormProvider(employeeService.selectedEmployee),
+        child: _EmployeeFormProviderBody(employeeService: employeeService));
   }
 }
 
-class _UserFormProviderBody extends StatelessWidget {
-  final UsuarioService usuarioService;
+class _EmployeeFormProviderBody extends StatelessWidget {
+  final EmployeeService employeeService;
 
-  const _UserFormProviderBody({
+  const _EmployeeFormProviderBody({
     super.key,
-    required this.usuarioService,
+    required this.employeeService,
   });
 
   @override
   Widget build(BuildContext context) {
-    final usuarioForm = Provider.of<UsuarioFormProvider>(context);
-    final usuario = usuarioForm.usuario;
-
+    final employeeForm = Provider.of<EmployeeFormProvider>(context);
+    final employee = employeeForm.employee;
+    print("employee.id: ${employee.id} - ${employee.ci}");
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Formulario de Usuario'),
+          title: const Text('Formulario Empleado'),
         ),
         body: SingleChildScrollView(
             child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Form(
-            key: usuarioForm.formKey,
+            key: employeeForm.formKey,
             child: Column(
               children: [
-                // CustomInputField(
-                //   labelText: 'Código',
-                //   helperText: 'Codigo de Usuario',
-                //   prefixIcon: Icons.credit_card_outlined,
-                //   formProperty: 'code',
-                //   initialValue: '${usuario.id}',
-                //   onChanged: (value) => usuario.id = int.parse(value),
-                // ),
-
-                const SizedBox(height: 10),
-                CustomInputField(
-                  labelText: 'Familia',
-                  helperText: 'Nombre de Familia',
-                  prefixIcon: Icons.family_restroom_outlined,
-                  formProperty: 'family',
-                  initialValue: usuario.family,
-                  onChanged: (value) => usuario.family = value,
-                ),
-                const SizedBox(height: 10),
-                CustomInputField(
-                  labelText: 'Direccón',
-                  helperText: 'Dirección de Domicilio',
-                  prefixIcon: Icons.house_outlined,
-                  formProperty: 'address',
-                  initialValue: usuario.address,
-                  onChanged: (value) => usuario.address = value,
-                ),
                 const SizedBox(height: 10),
                 Card(
                   elevation: 5,
@@ -80,13 +52,9 @@ class _UserFormProviderBody extends StatelessWidget {
                         horizontal: 20, vertical: 10),
                     child: Column(
                       children: [
-                        const Row(
-                          children: [
-                            Text(
-                              'Representante:',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ],
+                        Text(
+                          'Datos Empleado:',
+                          style: TextStyle(fontSize: 18),
                         ),
                         const SizedBox(height: 5),
                         CustomInputField(
@@ -94,8 +62,8 @@ class _UserFormProviderBody extends StatelessWidget {
                           helperText: 'Ingresar Numero de Carnet de Identidad',
                           prefixIcon: Icons.contact_emergency_outlined,
                           formProperty: 'ci',
-                          initialValue: usuario.ci,
-                          onChanged: (value) => usuario.ci = value,
+                          initialValue: employee.ci,
+                          onChanged: (value) => employee.ci = value,
                           length: 7,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
@@ -109,8 +77,8 @@ class _UserFormProviderBody extends StatelessWidget {
                           helperText: 'Ingresar Nombres',
                           prefixIcon: Icons.perm_contact_cal_outlined,
                           formProperty: 'names',
-                          initialValue: usuario.names,
-                          onChanged: (value) => usuario.names = value,
+                          initialValue: employee.names,
+                          onChanged: (value) => employee.names = value,
                         ),
                         const SizedBox(height: 10),
                         CustomInputField(
@@ -118,17 +86,17 @@ class _UserFormProviderBody extends StatelessWidget {
                           helperText: 'Ingresar Apellidos',
                           prefixIcon: Icons.perm_contact_cal_outlined,
                           formProperty: 'lastnames',
-                          initialValue: usuario.lastnames,
-                          onChanged: (value) => usuario.lastnames = value,
+                          initialValue: employee.lastnames,
+                          onChanged: (value) => employee.lastnames = value,
                         ),
                         const SizedBox(height: 10),
                         CustomInputField(
                           labelText: 'Celular',
                           helperText: 'Ingresar Numero de Celular',
-                          prefixIcon: Icons.perm_contact_cal_outlined,
+                          prefixIcon: Icons.smartphone_outlined,
                           formProperty: 'phone',
-                          initialValue: usuario.phone,
-                          onChanged: (value) => usuario.phone = value,
+                          initialValue: employee.phone,
+                          onChanged: (value) => employee.phone = value,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
@@ -138,36 +106,55 @@ class _UserFormProviderBody extends StatelessWidget {
                         const SizedBox(height: 10),
                         CustomInputField(
                           labelText: 'Correo',
-                          helperText: 'Correo del Usuario',
+                          helperText: 'Correo del Empleado',
                           prefixIcon: Icons.email_outlined,
                           keyboardType: TextInputType.emailAddress,
                           formProperty: 'email',
-                          initialValue: usuario.email,
-                          onChanged: (value) => usuario.email = value,
+                          initialValue: employee.email,
+                          onChanged: (value) => employee.email = value,
                           length: 0,
                         ),
                         const SizedBox(height: 10),
-                        // DropdownButtonFormField(
-                        //   value: 'Admin',
-                        //   items: const [
-                        //     DropdownMenuItem(
-                        //         value: 'Admin', child: Text('Admin')),
-                        //     DropdownMenuItem(
-                        //         value: 'User', child: Text('User')),
-                        //   ],
-                        //   onChanged: (value) {},
-                        // ),
+                        CustomInputField(
+                          labelText: 'Direccón',
+                          helperText: 'Dirección de Domicilio',
+                          prefixIcon: Icons.house_outlined,
+                          formProperty: 'address',
+                          initialValue: employee.address,
+                          onChanged: (value) => employee.address = value,
+                        ),
+                        const SizedBox(height: 10),
+                        DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Perfil',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(
+                              Icons.person_outline,
+                              color: AppTheme.primary,
+                            ),
+                          ),
+                          value: employee.profile,
+                          items: const [
+                            DropdownMenuItem(value: 2, child: Text('COBRADOR')),
+                            DropdownMenuItem(
+                                value: 1, child: Text('ADMINISTRADOR')),
+                          ],
+                          onChanged: (value) {
+                            employee.profile = value!;
+                          },
+                        ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: usuarioForm.isLoading
+                  onPressed: employeeForm.isLoading
                       ? null
                       : () async {
                           FocusScope.of(context).requestFocus(FocusNode());
-                          if (!usuarioForm.isValidForm()) {
+                          if (!employeeForm.isValidForm()) {
                             print('Formulario no válido');
                             return;
                           }
@@ -192,40 +179,38 @@ class _UserFormProviderBody extends StatelessWidget {
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  usuarioForm.setLoading(true);
+                                  employeeForm.setLoading(true);
                                   Navigator.of(context).pop();
-                                  await usuarioService
-                                      .saveOrCreateUsuario(usuario);
+                                  final res = await employeeService
+                                      .saveOrCreateEmpleado(employee);
                                   await Future.delayed(
                                       const Duration(seconds: 1));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Usuario guardado correctamente')),
-                                  );
-                                  usuarioForm.setLoading(false);
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    'user',
-                                    (route) => route.isFirst,
-                                  );
+                                  if (res) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Empleado guardado correctamente')),
+                                    );
+                                    Navigator.of(context).pop();
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Error al guardar el Empleado :(')),
+                                    );
+                                  }
+                                  employeeForm.setLoading(false);
                                 },
                                 child: const Text('Confirmar',
                                     style: TextStyle(color: AppTheme.harp)),
                               ),
                             ],
                           );
-                          // await usuarioService.saveOrCreateUsuario(usuario);
-                          // Navigator.pushNamedAndRemoveUntil(
-                          //   context,
-                          //   'user',
-                          //   (route) => route.isFirst,
-                          // );
                         },
                   child: SizedBox(
                       width: double.infinity,
                       child: Center(
-                          child: usuarioForm.isLoading
+                          child: employeeForm.isLoading
                               ? const CircularProgressIndicator(
                                   color: AppTheme.primary,
                                 )

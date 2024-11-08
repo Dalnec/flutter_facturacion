@@ -1,3 +1,4 @@
+import 'package:facturacion/src/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:facturacion/src/services/services.dart';
@@ -14,11 +15,40 @@ class MenuScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                Provider.of<AuthService>(context, listen: false).logout();
-                Navigator.pushReplacementNamed(context, 'login');
+                ModularDialog.showModularDialog(
+                  context: context,
+                  title: 'Confirmar Acción',
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        '¿Desea Cerrar Sesión?',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancelar'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await Future.delayed(const Duration(seconds: 1));
+                        Provider.of<AuthService>(context, listen: false)
+                            .logout();
+                        Navigator.pushReplacementNamed(context, 'login');
+                      },
+                      child: const Text('Confirmar',
+                          style: TextStyle(color: AppTheme.harp)),
+                    ),
+                  ],
+                );
               },
               icon: const Icon(
-                Icons.login_outlined,
+                Icons.logout_outlined,
                 color: Colors.white,
               ))
         ],

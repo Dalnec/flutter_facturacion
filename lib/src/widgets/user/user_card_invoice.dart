@@ -25,12 +25,13 @@ class UserCardInvoiceInfo extends StatelessWidget {
           readDate: '',
           measured: '',
           price: '',
-          total: '',
+          total: '0',
           status: 'D',
           employee: 0,
           usuario: usuario.id!,
           period: '',
           ticket: '',
+          previosMeasured: '',
         );
         Navigator.pushNamed(context, 'invoicehome');
       },
@@ -50,6 +51,7 @@ class UserCardInvoiceInfo extends StatelessWidget {
             addres: usuario.address,
             phone: usuario.phone,
             makeInvoice: usuario.makeInvoice,
+            representative: '${usuario.names} ${usuario.lastnames}',
           ),
         ),
       ),
@@ -76,6 +78,7 @@ class _UserInfo extends StatelessWidget {
   final String family;
   final String addres;
   final String phone;
+  final String representative;
 
   const _UserInfo({
     super.key,
@@ -85,6 +88,7 @@ class _UserInfo extends StatelessWidget {
     required this.addres,
     required this.phone,
     required this.makeInvoice,
+    required this.representative,
   });
 
   @override
@@ -145,17 +149,8 @@ class _UserInfo extends StatelessWidget {
         const SizedBox(height: 5),
         _rowInfo(Icons.phone, phone),
         const SizedBox(height: 5),
-        // const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        //   Icon(Icons.check, color: AppTheme.success, size: 25),
-        //   SizedBox(width: 10),
-        //   Text(
-        //     "AL DIA", //Habido
-        //     style: TextStyle(
-        //         fontSize: 20,
-        //         fontWeight: FontWeight.bold,
-        //         color: AppTheme.success),
-        //   )
-        // ])
+        _rowInfo(Icons.person, representative),
+        const SizedBox(height: 5),
       ],
     );
   }

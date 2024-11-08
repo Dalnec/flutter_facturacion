@@ -1,7 +1,7 @@
-export 'package:facturacion/src/widgets/year_selector.dart';
 export 'package:facturacion/src/widgets/background.dart';
 export 'package:facturacion/src/widgets/card_full_info_usuario.dart';
 export 'package:facturacion/src/widgets/charts/bar_chart.dart';
+export 'package:facturacion/src/widgets/charts/line_chart_monitoring.dart';
 export 'package:facturacion/src/widgets/charts/line_chart.dart';
 export 'package:facturacion/src/widgets/custom_input_field.dart';
 export 'package:facturacion/src/widgets/custom_navigatorbar.dart';
@@ -18,3 +18,4 @@ export 'package:facturacion/src/widgets/purchase_datatable.dart';
 export 'package:facturacion/src/widgets/ticket_format.dart';
 export 'package:facturacion/src/widgets/user/user_card_info.dart';
 export 'package:facturacion/src/widgets/user/user_card_invoice.dart';
+export 'package:facturacion/src/widgets/year_selector.dart';

@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FormChangePassword extends StatefulWidget {
+  final int? usuarioId;
+
   const FormChangePassword({
     super.key,
+    this.usuarioId,
   });
 
   @override
@@ -26,12 +29,23 @@ class _FormChangePasswordState extends State<FormChangePassword> {
     setState(() {
       _isLoading = true;
     });
-    final usuarioService = Provider.of<UsuarioService>(context, listen: false);
-    final usuario = usuarioService.selectedUsuario;
-    final resp = await usuarioService.changePassword(
-      '${usuario.id}',
-      newPassword,
-    );
+    final bool resp;
+    if (!widget.usuarioId.toString().isNotEmpty) {
+      final usuarioService =
+          Provider.of<UsuarioService>(context, listen: false);
+      final usuario = usuarioService.selectedUsuario;
+      resp = await usuarioService.changePassword(
+        '${usuario.id}',
+        newPassword,
+      );
+    } else {
+      final employeeService =
+          Provider.of<EmployeeService>(context, listen: false);
+      resp = await employeeService.changePassword(
+        '${widget.usuarioId}',
+        newPassword,
+      );
+    }
     await Future.delayed(const Duration(seconds: 2));
 
     setState(() {
@@ -49,6 +63,9 @@ class _FormChangePasswordState extends State<FormChangePassword> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Contraseña actualizada correctamente')),
     );
+    if (widget.usuarioId.toString().isNotEmpty) {
+      Navigator.pop(context);
+    }
   }
 
   @override

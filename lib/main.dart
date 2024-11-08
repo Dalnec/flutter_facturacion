@@ -36,6 +36,9 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => AuthService(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => EmployeeService(),
+        ),
       ],
       child: const MyApp(),
     );
@@ -64,6 +67,7 @@ class MyApp extends StatelessWidget {
         'district': (context) => const DistricScreen(),
         'purchase': (context) => const PurchaseScreen(),
         'purchaseform': (context) => const PurchaseFormScreen(),
+        'employee': (context) => const EmployeeScreen(),
       },
       scaffoldMessengerKey: NotificationsService.messengerKey,
       theme: AppTheme.lightTheme,

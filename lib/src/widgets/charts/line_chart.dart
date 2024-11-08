@@ -24,8 +24,6 @@ class LineChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Color> gradientColors = [
-      // AppTheme.tertiary,
-      // AppTheme.primary,
       Colors.blue,
       Colors.blue.withOpacity(0.2),
     ];
@@ -42,7 +40,8 @@ class LineChartWidget extends StatelessWidget {
           show: true,
           drawHorizontalLine: true,
           verticalInterval: 1,
-          horizontalInterval: 1,
+          horizontalInterval: 0.1,
+          // checkToShowHorizontalLine: (value) => value % 5 == 0,
           getDrawingVerticalLine: (value) {
             return const FlLine(
               color: Color(0xff37434d),
@@ -75,7 +74,7 @@ class LineChartWidget extends StatelessWidget {
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval: 1,
+              interval: 0.5,
               getTitlesWidget: leftTitleWidgets,
               reservedSize: 30,
             ),
@@ -86,9 +85,9 @@ class LineChartWidget extends StatelessWidget {
           border: Border.all(color: const Color(0xff37434d), width: 1),
         ),
         minX: minX, // Valor mínimo del eje X
-        maxX: maxX, // Valor máximo del eje X
+        // maxX: maxX, // Valor máximo del eje X
         minY: minY, // Valor mínimo del eje Y
-        maxY: maxY, // Valor máximo del eje Y
+        // maxY: maxY, // Valor máximo del eje Y
         lineBarsData: [
           LineChartBarData(
             // Cada punto del gráfico
@@ -103,7 +102,7 @@ class LineChartWidget extends StatelessWidget {
                     .lerp(0.2)!,
               ],
             ),
-            barWidth: 4,
+            barWidth: 2.5,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: true),
             // Color bajo la línea
@@ -113,7 +112,7 @@ class LineChartWidget extends StatelessWidget {
                 colors: [
                   ColorTween(begin: gradientColors[0], end: gradientColors[1])
                       .lerp(0.2)!
-                      .withOpacity(0.1),
+                      .withOpacity(0.2),
                   ColorTween(begin: gradientColors[0], end: gradientColors[1])
                       .lerp(0.2)!
                       .withOpacity(0.1),
