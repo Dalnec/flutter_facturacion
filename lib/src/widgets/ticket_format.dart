@@ -20,7 +20,7 @@ class TicketFormat extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
+        // borderRadius: BorderRadius.circular(15),
         border: Border.all(color: Colors.black),
       ),
       child: Column(
@@ -43,7 +43,7 @@ class TicketFormat extends StatelessWidget {
                   style: const TextStyle(fontSize: 16, color: Colors.black)),
             ],
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text('Medidor:',
@@ -53,7 +53,7 @@ class TicketFormat extends StatelessWidget {
                       color: Colors.black)),
               SizedBox(width: 10),
               //TODO: PREGUNTAR SI TIENE CODIGO DE MEDIDOR
-              Text('E365498',
+              Text(header.medidor,
                   style: TextStyle(fontSize: 16, color: Colors.black)),
             ],
           ),
@@ -202,6 +202,13 @@ class TicketFormat extends StatelessWidget {
               //     style: const TextStyle(fontSize: 16),
               //   ),
               // ),
+              Text(
+                body.price,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
               Text(
                 body.total,
                 style: const TextStyle(

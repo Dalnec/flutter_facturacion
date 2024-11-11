@@ -4,6 +4,7 @@ import 'package:facturacion/src/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:facturacion/src/widgets/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class InvoiceScreen extends StatefulWidget {
   const InvoiceScreen({super.key});
@@ -17,6 +18,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
+  final storage = const FlutterSecureStorage();
+  String profile = '';
 
   // Lista de tags
   final List<String> tags = ['Deuda', 'Facturar', 'Todos'];
@@ -75,6 +78,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     final usuarioService = Provider.of<UsuarioService>(context, listen: false);
     await usuarioService.getUsuarios(
         '', filterParams['hasDebt'], filterParams['makeInvoice']);
+    profile = await storage.read(key: 'profile') ?? '';
   }
 
   void setfiltersParams() {
@@ -100,48 +104,49 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   @override
   Widget build(BuildContext context) {
     final usuarioService = Provider.of<UsuarioService>(context);
+    final authService = Provider.of<AuthService>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Generar Factura"),
         actions: [
-          IconButton(
-              onPressed: () {
-                ModularDialog.showModularDialog(
-                  context: context,
-                  title: 'Confirmar Acción',
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        '¿Desea Cerrar Sesión?',
-                        style: TextStyle(fontSize: 16),
+          if (profile == 'COBRADOR')
+            IconButton(
+                onPressed: () {
+                  ModularDialog.showModularDialog(
+                    context: context,
+                    title: 'Confirmar Acción',
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          '¿Desea Cerrar Sesión?',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancelar'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await Future.delayed(const Duration(seconds: 1));
+                          authService.logout();
+                          Navigator.pushReplacementNamed(context, 'login');
+                        },
+                        child: const Text('Confirmar',
+                            style: TextStyle(color: AppTheme.harp)),
                       ),
                     ],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Cancelar'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await Future.delayed(const Duration(seconds: 1));
-                        Provider.of<AuthService>(context, listen: false)
-                            .logout();
-                        Navigator.pushReplacementNamed(context, 'login');
-                      },
-                      child: const Text('Confirmar',
-                          style: TextStyle(color: AppTheme.harp)),
-                    ),
-                  ],
-                );
-              },
-              icon: const Icon(
-                Icons.logout_outlined,
-                color: Colors.white,
-              ))
+                  );
+                },
+                icon: const Icon(
+                  Icons.logout_outlined,
+                  color: Colors.white,
+                ))
         ],
       ),
       body: Padding(

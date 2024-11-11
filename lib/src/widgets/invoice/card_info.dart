@@ -24,6 +24,7 @@ class CardInfoUserInvoice extends StatelessWidget {
           phone: usuario.phone,
           names: usuario.names,
           lastnames: usuario.lastnames,
+          ci: usuario.ci,
         ),
       ),
     );
@@ -35,8 +36,8 @@ class CardInfoUserInvoice extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
-            blurRadius: 15, // soften the shadow
-            offset: Offset(0, 5), // changes position of shadow
+            blurRadius: 15,
+            offset: Offset(0, 5),
           ),
         ],
       );
@@ -48,6 +49,7 @@ class _UserInfo extends StatelessWidget {
   final String family;
   final String addres;
   final String phone;
+  final String ci;
   final String names;
   final String lastnames;
 
@@ -60,6 +62,7 @@ class _UserInfo extends StatelessWidget {
     required this.phone,
     required this.names,
     required this.lastnames,
+    required this.ci,
   });
 
   @override
@@ -115,7 +118,7 @@ class _UserInfo extends StatelessWidget {
         const SizedBox(height: 5),
         _rowInfo(Icons.phone, phone),
         const SizedBox(height: 5),
-        _rowInfo(Icons.person, '$names $lastnames'),
+        _rowInfo(Icons.person, '$ci - $names $lastnames'),
         const SizedBox(height: 5),
       ],
     );

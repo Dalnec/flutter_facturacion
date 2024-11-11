@@ -8,7 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:widgets_to_image/widgets_to_image.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:typed_data';
+// import 'dart:typed_data';
+import 'dart:convert';
 
 class TicketScreen extends StatefulWidget {
   final String data;
@@ -51,7 +52,15 @@ class _TicketScreenState extends State<TicketScreen> {
   }
 
   Future<void> _shareLinkTicket() async {
-    final Uri url = Uri.parse('https://wa.me/59165351938?text=Hello');
+    final usuario =
+        Provider.of<UsuarioService>(context, listen: false).selectedUsuario;
+    final ticketData = Ticket.fromJson(json.decode(widget.data));
+    final header = ticketData.header;
+    final body = ticketData.body;
+    // final Uri url = Uri.parse(
+    //     "https://wa.me/59165351938?text=Hello\nhttp://localhost:8000/api/ticket/bfeef66f-bfed-409a-aac2-12f56290bbe7/");
+    final Uri url = Uri.parse(
+        "https://api.whatsapp.com/send?phone=591${usuario.phone}&text=Hola *${header.fullName}*, puede acceder a su recibo *${body.actualMonth}* ingresando al siguiente enlace:\nhttp://facturacionapi.tsi.pe/api/ticket/${widget.invoice.uuid}/");
     if (!await launchUrl(url)) {
       throw Exception('Could not launch $url');
     }

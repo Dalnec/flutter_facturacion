@@ -1,3 +1,4 @@
+import 'package:facturacion/src/screens/reports/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
         'purchase': (context) => const PurchaseScreen(),
         'purchaseform': (context) => const PurchaseFormScreen(),
         'employee': (context) => const EmployeeScreen(),
+        'report': (context) => const ReporteScreen(),
       },
       scaffoldMessengerKey: NotificationsService.messengerKey,
       theme: AppTheme.lightTheme,

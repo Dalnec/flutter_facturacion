@@ -22,6 +22,8 @@ class Usuario {
   String? password;
   bool? hasDebt;
   bool makeInvoice;
+  String? code;
+  String? lastMeasured;
 
   Usuario({
     this.id,
@@ -41,6 +43,8 @@ class Usuario {
     required this.employee,
     this.hasDebt,
     required this.makeInvoice,
+    this.code,
+    this.lastMeasured,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
@@ -61,6 +65,8 @@ class Usuario {
         employee: json["employee"],
         hasDebt: json["hasDebt"],
         makeInvoice: json["makeInvoice"],
+        code: json["code"],
+        lastMeasured: json["last_measured"],
       );
 
   // String usuarioToJson(Usuario data) => json.encode(data.toJson());
@@ -86,6 +92,8 @@ class Usuario {
         "password": password,
         "hasDebt": hasDebt,
         "makeInvoice": makeInvoice,
+        "code": code,
+        "last_measured": lastMeasured,
       };
 
   Usuario copy() => Usuario(

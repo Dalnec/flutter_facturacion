@@ -7,52 +7,102 @@ class CardTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Table(
-      children: const [
-        TableRow(children: [
-          _SingleCard(
-            color: AppTheme.secondary,
-            icon: Icons.people_alt_outlined,
-            text: 'Usuario',
-            route: 'user',
-          ),
-          _SingleCard(
-            color: AppTheme.secondary,
-            icon: Icons.add_chart_outlined,
-            text: 'Facturar',
-            route: 'invoice',
-          ),
-        ]),
-        TableRow(children: [
-          _SingleCard(
-            color: AppTheme.secondary,
-            icon: Icons.monitor_heart_outlined,
-            text: 'Monitoreo',
-            route: 'monitoring',
-          ),
-          _SingleCard(
-            color: AppTheme.secondary,
-            icon: Icons.water_damage_outlined,
-            // text: 'Compras',
-            text: 'Tarifas',
-            route: 'purchase',
-          ),
-        ]),
-        TableRow(children: [
-          _SingleCard(
-            color: AppTheme.secondary,
-            icon: Icons.house_outlined,
-            text: 'Barrio',
-            route: 'district',
-          ),
-          _SingleCard(
-            color: AppTheme.secondary,
-            icon: Icons.perm_contact_cal_outlined,
-            text: 'Empleados',
-            route: 'employee',
-          ),
-        ]),
-      ],
+    // return Table(
+    //   children: const [
+    //     TableRow(children: [
+    //       _SingleCard(
+    //         color: AppTheme.secondary,
+    //         icon: Icons.people_alt_outlined,
+    //         text: 'Usuario',
+    //         route: 'user',
+    //       ),
+    //       _SingleCard(
+    //         color: AppTheme.secondary,
+    //         icon: Icons.add_chart_outlined,
+    //         text: 'Facturar',
+    //         route: 'invoice',
+    //       ),
+    //     ]),
+    //     TableRow(children: [
+    //       _SingleCard(
+    //         color: AppTheme.secondary,
+    //         icon: Icons.monitor_heart_outlined,
+    //         text: 'Monitoreo',
+    //         route: 'monitoring',
+    //       ),
+    //       _SingleCard(
+    //         color: AppTheme.secondary,
+    //         icon: Icons.water_damage_outlined,
+    //         // text: 'Compras',
+    //         text: 'Tarifas',
+    //         route: 'purchase',
+    //       ),
+    //     ]),
+    //     TableRow(children: [
+    //       _SingleCard(
+    //         color: AppTheme.secondary,
+    //         icon: Icons.house_outlined,
+    //         text: 'Barrio',
+    //         route: 'district',
+    //       ),
+    //       _SingleCard(
+    //         color: AppTheme.secondary,
+    //         icon: Icons.perm_contact_cal_outlined,
+    //         text: 'Empleados',
+    //         route: 'employee',
+    //       ),
+    //     ]),
+    //   ],
+    // );
+    final menu = [
+      _SingleCard(
+        color: AppTheme.secondary,
+        icon: Icons.people_alt_outlined,
+        text: 'Usuario',
+        route: 'user',
+      ),
+      _SingleCard(
+        color: AppTheme.secondary,
+        icon: Icons.add_chart_outlined,
+        text: 'Facturar',
+        route: 'invoice',
+      ),
+      _SingleCard(
+        color: AppTheme.secondary,
+        icon: Icons.monitor_heart_outlined,
+        text: 'Monitoreo',
+        route: 'monitoring',
+      ),
+      _SingleCard(
+        color: AppTheme.secondary,
+        icon: Icons.water_damage_outlined,
+        text: 'Tarifas',
+        route: 'purchase',
+      ),
+      _SingleCard(
+        color: AppTheme.secondary,
+        icon: Icons.house_outlined,
+        text: 'Barrio',
+        route: 'district',
+      ),
+      _SingleCard(
+        color: AppTheme.secondary,
+        icon: Icons.perm_contact_cal_outlined,
+        text: 'Empleados',
+        route: 'employee',
+      ),
+      _SingleCard(
+        color: AppTheme.secondary,
+        icon: Icons.picture_as_pdf_outlined,
+        text: 'Reportes',
+        route: 'report',
+      ),
+    ];
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true, // Allows GridView to take only the space it needs
+      physics: NeverScrollableScrollPhysics(), // Prevents nested scrolling
+      children: menu,
     );
   }
 }

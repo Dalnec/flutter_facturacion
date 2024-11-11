@@ -64,12 +64,34 @@ class _UserFormProviderBody extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 CustomInputField(
-                  labelText: 'Direccón',
+                  labelText: 'Dirección',
                   helperText: 'Dirección de Domicilio',
                   prefixIcon: Icons.house_outlined,
                   formProperty: 'address',
                   initialValue: usuario.address,
                   onChanged: (value) => usuario.address = value,
+                ),
+                const SizedBox(height: 10),
+                CustomInputField(
+                  labelText: 'Codigo de Medidor',
+                  helperText: 'Cod. Medidor',
+                  prefixIcon: Icons.other_houses_outlined,
+                  formProperty: 'code',
+                  initialValue: usuario.code,
+                  onChanged: (value) => usuario.code = value,
+                ),
+                const SizedBox(height: 10),
+                CustomInputField(
+                  labelText: 'Ultima Medición',
+                  helperText: 'Ultimo valor medido',
+                  prefixIcon: Icons.keyboard_control_outlined,
+                  formProperty: 'lastMeasured',
+                  initialValue: usuario.lastMeasured,
+                  onChanged: (value) => usuario.lastMeasured = value,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^(\d+)?\.?\d{0,2}'))
+                  ],
                 ),
                 const SizedBox(height: 10),
                 Card(
