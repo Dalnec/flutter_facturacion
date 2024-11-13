@@ -44,6 +44,9 @@ dependencies:
   widgets_to_image: ^1.0.0
   url_launcher: ^6.3.0
   quickalert: ^1.1.0
+  path_provider: ^2.1.5
+  dio: ^5.7.0
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
