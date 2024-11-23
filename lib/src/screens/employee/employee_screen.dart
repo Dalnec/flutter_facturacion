@@ -233,13 +233,15 @@ class _UserInfo extends StatelessWidget {
       children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           _rowInfo(Icons.person_outline, employee.names, width: 150),
+          if (employee.status == 'I')
+            Text("Inactivo", style: TextStyle(color: AppTheme.error)),
           IconButton(
             onPressed: () {
               ModularDialog.showModularDialog(
                 context: context,
                 title: 'Eliminar Empleado',
-                content:
-                    const Text('¿Esta seguro de inhabilitar este Empleado?'),
+                content: Text(
+                    '¿Esta seguro de ${employee.status == 'A' ? 'Inactivar' : 'Activar'} este Empleado?'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -248,8 +250,27 @@ class _UserInfo extends StatelessWidget {
                     child: const Text('Cancelar'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
+                    onPressed: () async {
+                      final employeeService =
+                          Provider.of<EmployeeService>(context, listen: false);
+                      final status = employee.status == 'A' ? 'I' : 'A';
+                      final resp = await employeeService.changeStatus(
+                          '${employee.id}', status);
+                      if (resp) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Cambio de estado realizado correctamente')),
+                        );
+                        Navigator.of(context).pop();
+                        await employeeService.getEmployee('');
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Error al cambiar el estado')),
+                        );
+                        Navigator.of(context).pop();
+                      }
                     },
                     child: const Text('Confirmar',
                         style: TextStyle(color: AppTheme.harp)),
@@ -257,9 +278,12 @@ class _UserInfo extends StatelessWidget {
                 ],
               );
             },
-            tooltip: 'Eliminar',
+            tooltip: employee.status == 'I' ? 'Habilitar' : 'Inhabilitar',
             visualDensity: VisualDensity.compact,
-            icon: const Icon(Icons.delete, color: AppTheme.error, size: 25),
+            icon: Icon(Icons.block,
+                color:
+                    employee.status == 'I' ? AppTheme.primary : AppTheme.error,
+                size: 25),
             style: ButtonStyle(
               backgroundColor: WidgetStateProperty.all(Colors.transparent),
               foregroundColor: WidgetStateProperty.all(Colors.red),

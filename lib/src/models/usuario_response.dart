@@ -114,5 +114,7 @@ class Usuario {
         employee: employee,
         hasDebt: hasDebt,
         makeInvoice: makeInvoice,
+        code: code,
+        lastMeasured: lastMeasured,
       );
 }

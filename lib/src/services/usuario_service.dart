@@ -5,7 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class UsuarioService extends ChangeNotifier {
-  final String _baseUrl = 'facturacionapi.tsi.pe';
+  // final String _baseUrl = 'facturacionapi.tsi.pe';
+  final String _baseUrl = 'localhost:8000';
 
   List<Usuario> usuarios = [];
   late Usuario selectedUsuario = Usuario(
@@ -30,7 +31,7 @@ class UsuarioService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
   UsuarioService() {
-    getUsuarios('', null, null);
+    getUsuarios('', null, null, null);
   }
 
   Future saveOrCreateUsuario(Usuario usuario) async {
@@ -81,13 +82,15 @@ class UsuarioService extends ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
+    print("resp: ${resp.body}");
     final decodedData = json.decode(resp.body);
     usuario.id = decodedData['id'];
     usuarios.insert(0, usuario);
     return usuario.id.toString();
   }
 
-  Future getUsuarios(String? search, bool? hasDebt, bool? makeInvoice,
+  Future getUsuarios(
+      String? search, bool? hasDebt, bool? makeInvoice, String? status,
       [int pageSize = 20, int page = 1]) async {
     isLoading = true;
     _page = page;
@@ -98,9 +101,10 @@ class UsuarioService extends ChangeNotifier {
       'search': search,
       'hasDebt': '$hasDebt',
       'makeInvoice': '$makeInvoice',
+      'status': status,
     };
 
-    // final url = Uri.https(_baseUrl, '/api/login/');
+    // print(params);
     final url = Uri.http(_baseUrl, '/api/usuario/', params);
     // print('getUsuarios: $url');
     final resp = await http.get(url);
@@ -128,26 +132,34 @@ class UsuarioService extends ChangeNotifier {
   }
 
   Future loadMoreUsuarios(
-      String? search, bool? hasDebt, bool? makeInvoice) async {
+    String? search,
+    bool? hasDebt,
+    bool? makeInvoice,
+    String? status,
+  ) async {
     _page++;
     notifyListeners();
     final Map<String, dynamic> params = {
       'page_size': '20',
       'page': '$_page',
       'search': search,
-      'hasDebt': hasDebt,
-      'makeInvoice': makeInvoice,
+      'hasDebt': '$hasDebt',
+      'makeInvoice': '$makeInvoice',
+      'status': status,
     };
+    // print("params: $params");
     if (_count > usuarios.length) {
       // final url = Uri.https(_baseUrl, '/api/login/');
       final url = Uri.http(_baseUrl, '/api/usuario/', params);
       // print('loadMoreUsuarios: $url');
-
       final resp = await http.get(url);
-      final usuarioResponse = UsuarioResponse.fromJson(json.decode(resp.body));
-      usuarios = [...usuarios, ...usuarioResponse.results];
+      final res = json.decode(resp.body);
+      if (!res.containsKey('detail')) {
+        final usuarioResponse = UsuarioResponse.fromJson(res);
+        usuarios = [...usuarios, ...usuarioResponse.results];
 
-      notifyListeners();
+        notifyListeners();
+      }
     }
   }
 
@@ -178,5 +190,39 @@ class UsuarioService extends ChangeNotifier {
     );
     // print(resp.statusCode);
     return resp.statusCode == 201 ? true : false;
+  }
+
+  Future<bool> changeUsuarioStatus(int id, String status) async {
+    final url = Uri.http(_baseUrl, 'api/usuario/$id/change_status/');
+    final resp = await http.put(
+      url,
+      body: '{"status": "$status"}',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    // return resp.statusCode == 200 ? true : false;
+    if (resp.statusCode == 200) {
+      final index = usuarios.indexWhere((element) => element.id == id);
+      usuarios[index].status = status;
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> restartUsuarioDetail(int id, UsuarioDetail? data) async {
+    final url = Uri.http(_baseUrl, '/api/usuario/$id/restart_measured/');
+    final resp = await http.put(
+      url,
+      body: data!.toRawJson(),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (resp.statusCode == 200) {
+      return true;
+    }
+    return false;
   }
 }

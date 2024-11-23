@@ -7,6 +7,8 @@ export 'package:facturacion/src/screens/invoice/home_invoice_screen.dart';
 export 'package:facturacion/src/screens/invoice/invoice_screen.dart';
 export 'package:facturacion/src/screens/invoice/ticket_screen.dart';
 export 'package:facturacion/src/screens/invoice/user_info_invoice_screen.dart';
+export 'package:facturacion/src/screens/invoice/usuario_details_form_screen.dart';
+export 'package:facturacion/src/screens/invoice/usuario_details_screen.dart';
 export 'package:facturacion/src/screens/loading_screen.dart';
 export 'package:facturacion/src/screens/login_screen.dart';
 export 'package:facturacion/src/screens/menu_screen.dart';

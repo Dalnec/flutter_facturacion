@@ -10,5 +10,8 @@ export 'package:facturacion/src/models/purchase_response.dart';
 export 'package:facturacion/src/models/purchase.dart';
 export 'package:facturacion/src/models/settings.dart';
 export 'package:facturacion/src/models/ticket.dart';
+export 'package:facturacion/src/models/usuario_detail_response.dart';
+export 'package:facturacion/src/models/usuario_detail.dart';
 export 'package:facturacion/src/models/usuario_response.dart';
 export 'package:facturacion/src/models/usuario.dart';
+export 'package:facturacion/src/screens/screens.dart';

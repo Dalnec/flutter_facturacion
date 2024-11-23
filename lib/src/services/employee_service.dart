@@ -6,7 +6,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class EmployeeService extends ChangeNotifier {
-  final String _baseUrl = 'facturacionapi.tsi.pe';
+  // final String _baseUrl = 'facturacionapi.tsi.pe';
+  final String _baseUrl = 'localhost:8000';
 
   List<Employee> employees = [];
   late Employee selectedEmployee = Employee(
@@ -151,5 +152,17 @@ class EmployeeService extends ChangeNotifier {
       },
     );
     return resp.statusCode == 201 ? true : false;
+  }
+
+  Future<bool> changeStatus(String id, String status) async {
+    final url = Uri.http(_baseUrl, 'api/employee/$id/change_status/');
+    final resp = await http.put(
+      url,
+      body: '{"status": "$status"}',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    return resp.statusCode == 200 ? true : false;
   }
 }

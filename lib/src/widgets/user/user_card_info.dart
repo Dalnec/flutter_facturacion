@@ -52,6 +52,23 @@ class _UserInfo extends StatelessWidget {
     required this.service,
   });
 
+  void onPressed(usuarioService, context) async {
+    final status = usuario.status == 'A' ? 'I' : 'A';
+    final resp = await usuarioService.changeUsuarioStatus(usuario.id, status);
+    if (resp) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Cambio de estado realizado correctamente')),
+      );
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error al cambiar el estado')),
+      );
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -81,45 +98,83 @@ class _UserInfo extends StatelessWidget {
                 backgroundColor: WidgetStateProperty.all(
                     Colors.transparent), // Fondo transparente
                 foregroundColor: WidgetStateProperty.all(
-                    Colors.red), // Color del texto y del ícono
+                    AppTheme.warning), // Color del texto y del ícono
                 overlayColor: WidgetStateProperty.all(
-                    Colors.red.withOpacity(0.1)), // Efecto al hacer clic
+                    AppTheme.warning.withOpacity(0.1)), // Efecto al hacer clic
               ),
             ),
-            ElevatedButton.icon(
-              onPressed: () {
-                ModularDialog.showModularDialog(
-                  context: context,
-                  title: 'Eliminar Usuario',
-                  content: const Text('¿Esta accion no podrá revertirse?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Cancelar'),
+            usuario.status == 'A'
+                ? ElevatedButton.icon(
+                    onPressed: () {
+                      ModularDialog.showModularDialog(
+                        context: context,
+                        title: 'Inhabilitar Usuario',
+                        content:
+                            const Text('¿Deseas inhabilitar este usuario?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancelar'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              onPressed(service, context);
+                            },
+                            child: const Text('Confirmar',
+                                style: TextStyle(color: AppTheme.harp)),
+                          ),
+                        ],
+                      );
+                    },
+                    icon: const Icon(Icons.block,
+                        color: AppTheme.error, size: 25),
+                    label: const Text("Inhabilitar",
+                        style: TextStyle(color: AppTheme.error)),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStateProperty.all(Colors.transparent),
+                      foregroundColor: WidgetStateProperty.all(Colors.red),
+                      overlayColor:
+                          WidgetStateProperty.all(Colors.red.withOpacity(0.1)),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        // Lógica adicional al confirmar
-                      },
-                      child: const Text('Confirmar',
-                          style: TextStyle(color: AppTheme.harp)),
+                  )
+                : ElevatedButton.icon(
+                    onPressed: () {
+                      ModularDialog.showModularDialog(
+                        context: context,
+                        title: 'Habilitar Usuario',
+                        content: const Text('¿Deseas habilitar este usuario?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancelar'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              onPressed(service, context);
+                            },
+                            child: const Text('Confirmar',
+                                style: TextStyle(color: AppTheme.harp)),
+                          ),
+                        ],
+                      );
+                    },
+                    icon: Icon(Icons.block, color: AppTheme.success, size: 25),
+                    label: Text("Habilitar",
+                        style: TextStyle(color: AppTheme.success)),
+                    style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStateProperty.all(Colors.transparent),
+                      foregroundColor:
+                          WidgetStateProperty.all(AppTheme.success),
+                      overlayColor: WidgetStateProperty.all(
+                          AppTheme.success.withOpacity(0.1)),
                     ),
-                  ],
-                );
-              },
-              icon: const Icon(Icons.delete, color: AppTheme.error, size: 25),
-              label: const Text("Eliminar",
-                  style: TextStyle(color: AppTheme.error)),
-              style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.transparent),
-                foregroundColor: WidgetStateProperty.all(Colors.red),
-                overlayColor:
-                    WidgetStateProperty.all(Colors.red.withOpacity(0.1)),
-              ),
-            ),
+                  ),
           ],
         )
       ],

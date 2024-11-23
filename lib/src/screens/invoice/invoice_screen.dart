@@ -29,6 +29,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   final Map<String, dynamic> filterParams = {
     'hasDebt': null,
     'makeInvoice': null,
+    'status': 'A',
   };
   final Map<String, String> formValues = {
     'measure': '0',
@@ -67,8 +68,11 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     setState(() {
       _isLoadingMore = true;
     });
-    await usuarioService.loadMoreUsuarios(_searchController.text,
-        filterParams['hasDebt'], filterParams['makeInvoice']);
+    await usuarioService.loadMoreUsuarios(
+        _searchController.text,
+        filterParams['hasDebt'],
+        filterParams['makeInvoice'],
+        filterParams['status']);
     setState(() {
       _isLoadingMore = false;
     });
@@ -76,8 +80,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
 
   Future<void> _initFetchData() async {
     final usuarioService = Provider.of<UsuarioService>(context, listen: false);
-    await usuarioService.getUsuarios(
-        '', filterParams['hasDebt'], filterParams['makeInvoice']);
+    await usuarioService.getUsuarios('', filterParams['hasDebt'],
+        filterParams['makeInvoice'], filterParams['status']);
     profile = await storage.read(key: 'profile') ?? '';
   }
 
@@ -167,7 +171,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                               icon: const Icon(Icons.clear),
                               onPressed: () {
                                 _searchController.clear();
-                                usuarioService.getUsuarios('', null, null);
+                                usuarioService.getUsuarios('', null, null, 'A');
                                 setState(() {});
                               },
                             ),
@@ -177,14 +181,14 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         onPressed: () {
                           _scrollController.jumpTo(0);
                           usuarioService.getUsuarios(
-                              _searchController.text, null, null);
+                              _searchController.text, null, null, 'A');
                         },
                       ),
                     ),
                     onSubmitted: (value) {
                       _scrollController.jumpTo(0);
                       usuarioService.getUsuarios(
-                          _searchController.text, null, null);
+                          _searchController.text, null, null, 'A');
                     },
                   ),
                 ),
@@ -220,7 +224,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 color: AppTheme.primary,
                 backgroundColor: Colors.white.withOpacity(0.7),
                 onRefresh: () {
-                  return usuarioService.getUsuarios('', null, null);
+                  return usuarioService.getUsuarios('', null, null, 'A');
                 },
                 child: usuarioService.isLoading
                     ? const Center(child: CircularProgressIndicator())

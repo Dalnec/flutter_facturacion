@@ -5,7 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class InvoiceService extends ChangeNotifier {
-  final String _baseUrl = 'facturacionapi.tsi.pe';
+  // final String _baseUrl = 'facturacionapi.tsi.pe';
+  final String _baseUrl = 'localhost:8000';
 
   InvoiceResponse response = InvoiceResponse(count: 0, results: []);
   List<Invoice> invoices = [];
@@ -69,6 +70,8 @@ class InvoiceService extends ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
+    print("invoice: ${invoice.toRawJson()}");
+    print("response: ${resp.statusCode}");
     if (resp.statusCode != 201) {
       return invoice;
     }

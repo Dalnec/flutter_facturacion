@@ -17,6 +17,9 @@ class _UserScreenState extends State<UserScreen> {
   // Controlador de desplazamiento
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
+  final List<String> tags = ['Habilitados', 'Inhabilitados', 'Todos'];
+  List<bool> _isSelected = [false, false, false];
+  String? filterStatus = '';
 
   @override
   void initState() {
@@ -58,7 +61,8 @@ class _UserScreenState extends State<UserScreen> {
       _isLoadingMore = true;
     });
     // lógica para cargar más usuarios
-    await usuarioService.loadMoreUsuarios(_searchController.text, null, null);
+    await usuarioService.loadMoreUsuarios(
+        _searchController.text, null, null, filterStatus);
     setState(() {
       _isLoadingMore = false;
     });
@@ -66,7 +70,28 @@ class _UserScreenState extends State<UserScreen> {
 
   Future<void> _initFetchData() async {
     final usuarioService = Provider.of<UsuarioService>(context, listen: false);
-    await usuarioService.getUsuarios('', null, null);
+    await usuarioService.getUsuarios('', null, null, filterStatus);
+  }
+
+  void setfiltersParams() {
+    print(_isSelected);
+    if (_isSelected[0] == true) {
+      filterStatus = 'A';
+      // _isSelected[1] = false;
+      // _isSelected[2] = false;
+    }
+    if (_isSelected[1] == true) {
+      filterStatus = 'I';
+      // _isSelected[0] = false;
+      // _isSelected[2] = false;
+    }
+    if (_isSelected[2] == true) {
+      filterStatus = null;
+      _isSelected[0] = false;
+      _isSelected[1] = false;
+    }
+    setState(() {});
+    // _initFetchData();
   }
 
   @override
@@ -94,7 +119,8 @@ class _UserScreenState extends State<UserScreen> {
                               icon: const Icon(Icons.clear),
                               onPressed: () {
                                 _searchController.clear();
-                                usuarioService.getUsuarios('', null, null);
+                                usuarioService.getUsuarios(
+                                    '', null, null, filterStatus);
                                 setState(() {});
                               },
                             ),
@@ -104,14 +130,14 @@ class _UserScreenState extends State<UserScreen> {
                         onPressed: () {
                           _scrollController.jumpTo(0);
                           usuarioService.getUsuarios(
-                              _searchController.text, null, null);
+                              _searchController.text, null, null, filterStatus);
                         },
                       ),
                     ),
                     onSubmitted: (value) {
                       _scrollController.jumpTo(0);
                       usuarioService.getUsuarios(
-                          _searchController.text, null, null);
+                          _searchController.text, null, null, filterStatus);
                     },
                   ),
                 ),
@@ -139,14 +165,58 @@ class _UserScreenState extends State<UserScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: Wrap(
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: List<Widget>.generate(tags.length, (int index) {
+                      return ChoiceChip(
+                        label: Text(tags[index]),
+                        selected: _isSelected[index],
+                        onSelected: (bool selected) {
+                          setState(() {
+                            _isSelected[index] = selected;
+                            // setfiltersParams();
+                            if (index == 0) {
+                              filterStatus = 'A';
+                              _isSelected[0] = true;
+                              _isSelected[1] = false;
+                              _isSelected[2] = false;
+                            }
+                            if (index == 1) {
+                              filterStatus = 'I';
+                              _isSelected[0] = false;
+                              _isSelected[1] = true;
+                              _isSelected[2] = false;
+                            }
+                            if (index == 2) {
+                              filterStatus = null;
+                              _isSelected[0] = false;
+                              _isSelected[1] = false;
+                              _isSelected[2] = true;
+                            }
+                          });
+                          _initFetchData();
+                        },
+                      );
+                    }),
+                  ),
+                ),
+              ],
+            ),
             Expanded(
               // ListView con ScrollController para detectar el desplazamiento
               child: RefreshIndicator(
                 color: AppTheme.primary,
                 backgroundColor: Colors.white.withOpacity(0.7),
                 onRefresh: () {
-                  return usuarioService.getUsuarios('', null, null);
+                  return usuarioService.getUsuarios(
+                      '', null, null, filterStatus);
                 },
                 child: usuarioService.isLoading
                     ? const Center(child: CircularProgressIndicator())

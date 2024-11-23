@@ -17,6 +17,9 @@ class AppState extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (_) => UsuarioDetailDetailService(),
+        ),
+        ChangeNotifierProvider(
           create: (_) => BottomNavigationProvider(),
         ),
         ChangeNotifierProvider(
