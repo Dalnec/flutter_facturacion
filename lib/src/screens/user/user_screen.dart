@@ -157,6 +157,7 @@ class _UserScreenState extends State<UserScreen> {
                       makeInvoice: false,
                       code: '',
                       lastMeasured: '',
+                      restart: false,
                     );
                     Navigator.pushNamed(context, 'userform');
                   },

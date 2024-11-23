@@ -24,6 +24,7 @@ class Usuario {
   bool makeInvoice;
   String? code;
   String? lastMeasured;
+  bool restart;
 
   Usuario({
     this.id,
@@ -45,6 +46,7 @@ class Usuario {
     required this.makeInvoice,
     this.code,
     this.lastMeasured,
+    required this.restart,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
@@ -67,6 +69,7 @@ class Usuario {
         makeInvoice: json["makeInvoice"],
         code: json["code"],
         lastMeasured: json["last_measured"],
+        restart: json["restart"],
       );
 
   // String usuarioToJson(Usuario data) => json.encode(data.toJson());
@@ -94,6 +97,7 @@ class Usuario {
         "makeInvoice": makeInvoice,
         "code": code,
         "last_measured": lastMeasured,
+        "restart": restart,
       };
 
   Usuario copy() => Usuario(
@@ -116,5 +120,6 @@ class Usuario {
         makeInvoice: makeInvoice,
         code: code,
         lastMeasured: lastMeasured,
+        restart: restart,
       );
 }

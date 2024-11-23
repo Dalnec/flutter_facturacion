@@ -1,6 +1,7 @@
 import 'package:facturacion/src/providers/bottom_navigation_bar_provider.dart';
 import 'package:facturacion/src/screens/screens.dart'
     show FormInvoiceScreen, UserInfoInvoiceScreen;
+import 'package:facturacion/src/services/auth_service.dart';
 import 'package:facturacion/src/services/purchase_service.dart';
 import 'package:facturacion/src/widgets/widgets.dart' show CustomNavigatorBar;
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class _HomePageBody extends StatelessWidget {
     final bottomNavigationProvider =
         Provider.of<BottomNavigationProvider>(context);
     Provider.of<PurchaseService>(context, listen: false).getLastPurchase();
+    Provider.of<AuthService>(context, listen: false).readProfile();
     // Cambiar para mostrar la pagina respectiva
     final currentIndex = bottomNavigationProvider.selectedMenuOpt;
     switch (currentIndex) {

@@ -1,5 +1,5 @@
 import 'package:facturacion/src/models/models.dart';
-import 'package:facturacion/src/screens/screens.dart';
+import 'package:facturacion/src/services/auth_service.dart';
 import 'package:facturacion/src/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,102 +14,148 @@ class UserInfoInvoiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final usuarioService = Provider.of<UsuarioService>(context);
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final profile = authService.profileStorage;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Información de Usuario'),
         actions: [
-          // if (profile == 'COBRADOR')
-
-          IconButton(
+          if (profile == 'ADMINISTRADOR')
+            IconButton(
               onPressed: () {
                 double lectura = 0.0;
-                ModularDialog.showModularDialog(
-                  context: context,
-                  title: 'Reiniciar Valor Medidor',
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'En caso de haber una lectura pendiente, deberá registrarla.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      SizedBox(height: 10),
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Valor de Lectura',
-                          prefixIcon: Icon(Icons.add_chart),
+                if (!usuarioService.selectedUsuario.restart) {
+                  ModularDialog.showModularDialog(
+                    context: context,
+                    title: 'Reiniciar Valor Medidor',
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'En caso de haber una lectura pendiente, deberá registrarla.',
+                          style: TextStyle(fontSize: 16),
                         ),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'^(\d+)?\.?\d{0,2}'))
-                        ],
-                        onChanged: (value) {
-                          if (value.isEmpty) return;
-                          lectura = double.parse(value);
-                        },
-                      ),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Cancelar'),
+                        SizedBox(height: 10),
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Valor de Lectura',
+                            prefixIcon: Icon(Icons.add_chart),
+                          ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^(\d+)?\.?\d{0,2}'))
+                          ],
+                          onChanged: (value) {
+                            if (value.isEmpty) return;
+                            lectura = double.parse(value);
+                          },
+                        ),
+                      ],
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await Future.delayed(const Duration(seconds: 1));
-                        print("lectura: $lectura");
-                        final value = UsuarioDetail(
-                          description:
-                              'Lectura Anterior al Reinicio del Medidor',
-                          price: '0',
-                          quantity: '$lectura',
-                          isIncome: true,
-                          status: true,
-                          usuario: usuarioService.selectedUsuario.id!,
-                        );
-                        final response =
-                            await usuarioService.restartUsuarioDetail(
-                          usuarioService.selectedUsuario.id!,
-                          value,
-                        );
-                        if (!response) {
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancelar'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await Future.delayed(const Duration(seconds: 1));
+                          print("lectura: $lectura");
+                          final value = UsuarioDetail(
+                            description:
+                                'Lectura Anterior al Reinicio del Medidor',
+                            price: '0',
+                            quantity: '$lectura',
+                            isIncome: true,
+                            status: true,
+                            usuario: usuarioService.selectedUsuario.id!,
+                          );
+                          final response =
+                              await usuarioService.restartUsuarioDetail(
+                            usuarioService.selectedUsuario.id!,
+                            value,
+                          );
+                          if (!response) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Error al reiniciar el valor')),
+                            );
+                            return;
+                          }
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text('Error al reiniciar el valor')),
+                                content:
+                                    Text('Cambios realizados correctamente')),
                           );
-                          return;
-                        }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Valor reiniciado correctamente')),
-                        );
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Confirmar',
-                          style: TextStyle(color: AppTheme.harp)),
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Confirmar',
+                            style: TextStyle(color: AppTheme.harp)),
+                      ),
+                    ],
+                  );
+                } else {
+                  ModularDialog.showModularDialog(
+                    context: context,
+                    title: 'Revertir Reinicio',
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'No reiniciar el valor del medidor en la siguiente lectura.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
                     ),
-                  ],
-                );
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancelar'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await Future.delayed(const Duration(seconds: 1));
+                          print("lectura: $lectura");
+                          final usuario = usuarioService.selectedUsuario.copy();
+                          usuario.restart = false;
+                          await usuarioService.saveOrCreateUsuario(usuario);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content:
+                                    Text('Cambios realizados correctamente')),
+                          );
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Confirmar',
+                            style: TextStyle(color: AppTheme.harp)),
+                      ),
+                    ],
+                  );
+                }
               },
               icon: const Icon(
                 Icons.restore_outlined,
                 color: Colors.white,
-              )),
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UsuarioDetailsScreen()),
-                );
-              },
-              icon: const Icon(
-                Icons.format_list_bulleted_outlined,
-                color: Colors.white,
-              )),
+              ),
+            ),
+          if (profile == 'ADMINISTRADOR')
+            IconButton(
+                onPressed: () {
+                  print(usuarioService.selectedUsuario.toJson());
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => UsuarioDetailsScreen()),
+                  );
+                },
+                icon: const Icon(
+                  Icons.format_list_bulleted_outlined,
+                  color: Colors.white,
+                )),
         ],
       ),
       body: NestedScrollView(

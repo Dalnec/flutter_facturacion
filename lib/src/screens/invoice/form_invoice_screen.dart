@@ -72,6 +72,7 @@ class FormInvoiceScreen extends StatelessWidget {
                           RegExp(r'^(\d+)?\.?\d{0,2}'))
                     ],
                     onChanged: (value) => invoice.measured = value,
+                    length: 1,
                   ),
                 ),
               ),

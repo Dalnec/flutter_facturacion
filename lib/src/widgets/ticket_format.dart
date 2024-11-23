@@ -15,6 +15,7 @@ class TicketFormat extends StatelessWidget {
     final ticketData = Ticket.fromJson(json.decode(data));
     final header = ticketData.header;
     final body = ticketData.body;
+    final details = ticketData.details;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -190,18 +191,13 @@ class TicketFormat extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              // Expanded(
-              //   child: const Text(
-              //     '15',
-              //     style: const TextStyle(fontSize: 16),
-              //   ),
-              // ),
-              // Expanded(
-              //   child: const Text(
-              //     '0.65',
-              //     style: const TextStyle(fontSize: 16),
-              //   ),
-              // ),
+              Text(
+                body.consumed,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+              ),
               Text(
                 body.price,
                 style: const TextStyle(
@@ -210,12 +206,51 @@ class TicketFormat extends StatelessWidget {
                 ),
               ),
               Text(
-                body.total,
+                body.subtotal,
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.black,
                 ),
               ),
+            ],
+          ),
+          ListView(
+            shrinkWrap: true,
+            children: [
+              for (int i = 0; i < details.length; i++)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text(
+                      details[i].description,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      details[i].quantity,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      details[i].price,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      details[i].subtotal,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    )
+                  ],
+                ),
             ],
           ),
           const SizedBox(height: 10),

@@ -58,7 +58,7 @@ class _TicketScreenState extends State<TicketScreen> {
     final header = ticketData.header;
     final body = ticketData.body;
     // final Uri url = Uri.parse(
-    //     "https://wa.me/59165351938?text=Hello\nhttp://localhost:8000/api/ticket/bfeef66f-bfed-409a-aac2-12f56290bbe7/");
+    //     "https://wa.me/59165351938?text=Hello\nhttp://192.168.1.4:8000/api/ticket/bfeef66f-bfed-409a-aac2-12f56290bbe7/");
     final Uri url = Uri.parse(
         "https://api.whatsapp.com/send?phone=591${usuario.phone}&text=Hola *${header.fullName}*, puede acceder a su recibo *${body.actualMonth}* ingresando al siguiente enlace:\nhttp://facturacionapi.tsi.pe/api/ticket/${widget.invoice.uuid}/");
     if (!await launchUrl(url)) {

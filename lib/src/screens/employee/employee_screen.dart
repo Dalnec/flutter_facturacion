@@ -49,17 +49,16 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
   }
 
   Future<void> _loadMore(EmployeeService employeeService) async {
-    if (mounted) {
-      setState(() {
-        _isLoadingMore = true;
-      });
-    }
+    if (!mounted) return;
+    setState(() {
+      _isLoadingMore = true;
+    });
+
     await employeeService.loadMoreEmployee(_searchController.text);
-    if (mounted) {
-      setState(() {
-        _isLoadingMore = false;
-      });
-    }
+    if (!mounted) return;
+    setState(() {
+      _isLoadingMore = false;
+    });
   }
 
   Future<void> _initFetchData() async {

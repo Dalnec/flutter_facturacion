@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class UsuarioService extends ChangeNotifier {
   // final String _baseUrl = 'facturacionapi.tsi.pe';
-  final String _baseUrl = 'localhost:8000';
+  final String _baseUrl = '192.168.1.4:8000';
 
   List<Usuario> usuarios = [];
   late Usuario selectedUsuario = Usuario(
@@ -22,6 +22,7 @@ class UsuarioService extends ChangeNotifier {
     employee: 0,
     makeInvoice: false,
     hasDebt: false,
+    restart: false,
   );
   // late Usuario selectedUsuario;
   bool isLoading = true;
@@ -61,7 +62,8 @@ class UsuarioService extends ChangeNotifier {
     print(decodedData);
     final index = usuarios.indexWhere((element) => element.id == usuario.id);
     usuarios[index] = usuario;
-
+    selectedUsuario = usuario;
+    notifyListeners();
     return usuario.id.toString();
   }
 
