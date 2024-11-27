@@ -5,8 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class DistricService extends ChangeNotifier {
-  // final String _baseUrl = 'facturacionapi.tsi.pe';
-  final String _baseUrl = '192.168.1.4:8000';
+  final String _baseUrl = 'facturacionapi.tsi.pe';
+  // final String _baseUrl = 'localhost:8000';
 
   Distric distric = Distric(
     name: '',
@@ -17,6 +17,8 @@ class DistricService extends ChangeNotifier {
   );
   Settings settings = Settings(
     intervalTimeDevice: '0',
+    width: '0',
+    height: '0',
   );
 
   bool isLoading = true;
@@ -79,6 +81,7 @@ class DistricService extends ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
+    print(resp.body);
     if (resp.statusCode != 200) return false;
     final settingsResponse = Settings.fromJson(json.decode(resp.body));
     settings = settingsResponse;

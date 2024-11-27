@@ -28,6 +28,7 @@ class _WaterTankLevelState extends State<WaterTankLevel>
     percentage: '',
     isConnected: false,
     battery: '',
+    height: '',
   );
 
   @override
@@ -85,81 +86,121 @@ class _WaterTankLevelState extends State<WaterTankLevel>
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Contenedor del tanque de agua
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 120,
-                  height: 170,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blueAccent, width: 3),
-                    borderRadius: const BorderRadius.vertical(
-                        bottom: Radius.circular(10), top: Radius.circular(5)),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${(currentWaterLevel * 100).toInt()}%',
-                          style: const TextStyle(
-                              fontSize: 40, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      // Nivel de agua con movimiento de olas
-                      AnimatedContainer(
-                        duration: const Duration(seconds: 1),
-                        width: double.infinity,
-                        height: 180 * currentWaterLevel,
-                        child: Stack(
-                          children: [
-                            Container(
-                              color: Colors.blueAccent.withOpacity(0.6),
-                            ),
-                            // Olas en la parte superior del agua
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              child: AnimatedBuilder(
-                                animation: _waveController,
-                                builder: (context, child) {
-                                  return CustomPaint(
-                                    painter: WavePainter(_waveController.value,
-                                        currentWaterLevel),
-                                    size: const Size(double.infinity, 50),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Text(
-                  'Tanque Barrial',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text("Capacidad: ${(_dataCard.capacity ?? 0.0).toInt()} litros",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black38,
+                  )),
+              Text("Altura: ${_dataCard.height} cm",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black38,
+                  )),
+            ],
           ),
-          initLoading
-              ? Center(child: CircularProgressIndicator())
-              : InfoDisplay(
-                  currentWaterLevel: _dataCard.percentage,
-                  lastUpdate: _dataCard.readDate,
-                  isConnected: _dataCard.isConnected,
-                  batteryLevel: _dataCard.battery,
-                )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Contenedor del tanque de agua
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 170,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.blueAccent, width: 3),
+                        borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(10),
+                            top: Radius.circular(5)),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${(currentWaterLevel * 100).toInt()}%',
+                              style: const TextStyle(
+                                  fontSize: 40, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          // Nivel de agua con movimiento de olas
+                          AnimatedContainer(
+                            duration: const Duration(seconds: 1),
+                            width: double.infinity,
+                            height: 180 * currentWaterLevel,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  color: Colors.blueAccent.withOpacity(0.6),
+                                ),
+                                // Olas en la parte superior del agua
+                                Positioned(
+                                  top: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: AnimatedBuilder(
+                                    animation: _waveController,
+                                    builder: (context, child) {
+                                      return CustomPaint(
+                                        painter: WavePainter(
+                                            _waveController.value,
+                                            currentWaterLevel),
+                                        size: const Size(double.infinity, 50),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Text(
+                      'Tanque Barrial',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      '${_dataCard.liters} litros aprox.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black38,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              initLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : InfoDisplay(
+                      currentWaterLevel: _dataCard.percentage,
+                      lastUpdate: _dataCard.readDate,
+                      isConnected: _dataCard.isConnected ?? false,
+                      batteryLevel: _dataCard.battery,
+                      measured: _dataCard.measured,
+                      liters: _dataCard.liters ?? 0,
+                      height: _dataCard.height ?? '',
+                      capacity: _dataCard.capacity ?? 0,
+                    )
+            ],
+          ),
         ],
       ),
     );
@@ -171,6 +212,10 @@ class InfoDisplay extends StatelessWidget {
   final String lastUpdate;
   final bool isConnected;
   final String batteryLevel;
+  final String measured;
+  final double liters;
+  final String height;
+  final double capacity;
 
   const InfoDisplay({
     super.key,
@@ -178,6 +223,10 @@ class InfoDisplay extends StatelessWidget {
     required this.lastUpdate,
     required this.isConnected,
     required this.batteryLevel,
+    required this.liters,
+    required this.height,
+    required this.capacity,
+    required this.measured,
   });
 
   @override
@@ -202,10 +251,12 @@ class InfoDisplay extends StatelessWidget {
         children: [
           // Nivel de Agua
           _InfoDetail(
-              icon: Icons.water_drop_outlined,
-              color: Colors.blue,
-              label: 'Nivel de Agua',
-              value: '$currentWaterLevel%'),
+            icon: Icons.water_drop_outlined,
+            color: Colors.blue,
+            label: 'Nivel de Agua',
+            value:
+                '$currentWaterLevel% ${double.parse(height) - double.parse(measured)} cm',
+          ),
           const SizedBox(height: 10),
           // Última Actualización
           _InfoDetail(

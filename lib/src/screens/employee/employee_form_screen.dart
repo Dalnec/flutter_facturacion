@@ -135,7 +135,8 @@ class _EmployeeFormProviderBody extends StatelessWidget {
                           ),
                           value: employee.profile,
                           items: const [
-                            DropdownMenuItem(value: 2, child: Text('COBRADOR')),
+                            DropdownMenuItem(
+                                value: 2, child: Text('LECTURADOR')),
                             DropdownMenuItem(
                                 value: 1, child: Text('ADMINISTRADOR')),
                           ],

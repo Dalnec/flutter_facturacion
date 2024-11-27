@@ -5,8 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService extends ChangeNotifier {
-  // final String _baseUrl = 'facturacionapi.tsi.pe';
-  final String _baseUrl = '192.168.1.4:8000';
+  final String _baseUrl = 'facturacionapi.tsi.pe';
+  // final String _baseUrl = 'localhost:8000';
 
   String? profileStorage = '';
 
@@ -80,7 +80,7 @@ class AuthService extends ChangeNotifier {
     return token.isNotEmpty ? "$token;$employee;$profile" : '';
   }
 
-  void readProfile() async {
+  Future<void> readProfile() async {
     profileStorage = await storage.read(key: 'profile') ?? '';
     notifyListeners();
   }

@@ -21,10 +21,11 @@ class CardInfoUserInvoice extends StatelessWidget {
           code: usuario.id.toString(),
           family: usuario.family,
           addres: usuario.address,
-          phone: usuario.phone,
+          phone: usuario.phone ?? '-',
           names: usuario.names,
           lastnames: usuario.lastnames,
           ci: usuario.ci,
+          lastInvoice: usuario.lastInvoice ?? '-',
         ),
       ),
     );
@@ -52,6 +53,7 @@ class _UserInfo extends StatelessWidget {
   final String ci;
   final String names;
   final String lastnames;
+  final String lastInvoice;
 
   const _UserInfo({
     super.key,
@@ -63,6 +65,7 @@ class _UserInfo extends StatelessWidget {
     required this.names,
     required this.lastnames,
     required this.ci,
+    required this.lastInvoice,
   });
 
   @override
@@ -119,6 +122,8 @@ class _UserInfo extends StatelessWidget {
         _rowInfo(Icons.phone, phone),
         const SizedBox(height: 5),
         _rowInfo(Icons.person, '$ci - $names $lastnames'),
+        const SizedBox(height: 5),
+        _rowInfo(Icons.receipt, lastInvoice),
         const SizedBox(height: 5),
       ],
     );

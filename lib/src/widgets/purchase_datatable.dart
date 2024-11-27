@@ -16,11 +16,11 @@ class PurchaseDataTable extends StatefulWidget {
 
 class _PurchaseDataTableState extends State<PurchaseDataTable> {
   int _currentPage = 1;
-  final int _pageSize = 10;
+  final int _pageSize = 20;
   bool _isLoading = false;
   bool _hasMoreData = true;
   final List<Purchase> _data = [];
-  int _year = 0;
+  // int _year = 0;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -34,7 +34,7 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
         _loadMoreData();
       }
     });
-    _fetchData();
+    // _fetchData();
   }
 
   @override
@@ -78,13 +78,13 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
 
   @override
   Widget build(BuildContext context) {
-    if (_year != widget.year && widget.year != null) {
-      _year = widget.year!;
-      _currentPage = 1;
-      _data.clear();
-      _fetchData();
-      setState(() {});
-    }
+    // if (_year != widget.year && widget.year != null) {
+    //   _year = widget.year!;
+    //   _currentPage = 1;
+    //   _data.clear();
+    //   _fetchData();
+    //   setState(() {});
+    // }
 
     if (widget.reload == true) {
       _currentPage = 1;
@@ -92,6 +92,9 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
       _fetchData();
       setState(() {});
     }
+    final purchaseService =
+        Provider.of<PurchaseService>(context, listen: false);
+
     return Scaffold(
       body: _data.isEmpty && _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -102,6 +105,7 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
                   SizedBox(
                     width: double.infinity,
                     child: DataTable(
+                      showCheckboxColumn: false,
                       headingRowColor:
                           const WidgetStatePropertyAll(AppTheme.primary),
                       headingRowHeight: 30,
@@ -111,28 +115,22 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
                       columns: const [
                         DataColumn(
                             label: Text(
+                              '',
+                              style: TextStyle(color: AppTheme.harp),
+                            ),
+                            headingRowAlignment: MainAxisAlignment.center),
+                        DataColumn(
+                            label: Text(
                               'Fecha',
                               style: TextStyle(color: AppTheme.harp),
                             ),
                             headingRowAlignment: MainAxisAlignment.center),
-                        // DataColumn(
-                        //     label: Text(
-                        //       'Cantidad',
-                        //       style: TextStyle(color: AppTheme.harp),
-                        //     ),
-                        //     headingRowAlignment: MainAxisAlignment.center),
                         DataColumn(
                             label: Text(
                               'Precio',
                               style: TextStyle(color: AppTheme.harp),
                             ),
                             headingRowAlignment: MainAxisAlignment.center),
-                        // DataColumn(
-                        //     label: Text(
-                        //       'Total',
-                        //       style: TextStyle(color: AppTheme.harp),
-                        //     ),
-                        //     headingRowAlignment: MainAxisAlignment.center),
                         DataColumn(
                             label: Text(
                               'Encargado',
@@ -140,45 +138,91 @@ class _PurchaseDataTableState extends State<PurchaseDataTable> {
                             ),
                             headingRowAlignment: MainAxisAlignment.center),
                       ],
-                      rows: _data
-                          .map((item) => DataRow(cells: [
-                                DataCell(Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    item.formatedPurchasedDate(),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )),
-                                // DataCell(Container(
-                                //   alignment: Alignment.center,
-                                //   child: Text(
-                                //     item.liters,
-                                //     textAlign: TextAlign.center,
-                                //   ),
-                                // )),
-                                DataCell(Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    item.price,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )),
-                                // DataCell(Container(
-                                //   alignment: Alignment.center,
-                                //   child: Text(
-                                //     item.total,
-                                //     textAlign: TextAlign.center,
-                                //   ),
-                                // )),
-                                DataCell(Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    item.employeeName.toString(),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )),
-                              ]))
-                          .toList(),
+                      // rows: _data
+                      //     .map((item) => DataRow(cells: [
+                      //           DataCell(Container(
+                      //             alignment: Alignment.center,
+                      //             child: Text(
+                      //               '',
+                      //               textAlign: TextAlign.center,
+                      //             ),
+                      //           )),
+                      //           DataCell(Container(
+                      //             alignment: Alignment.center,
+                      //             child: Text(
+                      //               item.formatedPurchasedDate(),
+                      //               textAlign: TextAlign.center,
+                      //             ),
+                      //           )),
+                      //           DataCell(Container(
+                      //             alignment: Alignment.center,
+                      //             child: Text(
+                      //               item.price,
+                      //               textAlign: TextAlign.center,
+                      //             ),
+                      //           )),
+                      //           DataCell(Container(
+                      //             alignment: Alignment.center,
+                      //             child: Text(
+                      //               item.employeeName.toString(),
+                      //               textAlign: TextAlign.center,
+                      //             ),
+                      //           )),
+                      //         ]))
+                      //     .toList(),
+                      rows: List.generate(_data.length, (index) {
+                        final item = _data[index];
+                        return DataRow(
+                            onSelectChanged: index == 0
+                                ? (value) async {
+                                    purchaseService.selectedPurchase =
+                                        item.copy();
+                                    final result = await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PurchaseFormScreen(),
+                                      ),
+                                    );
+                                    if (result != null && result == 'reload') {
+                                      _currentPage = 1;
+                                      _data.clear();
+                                      _fetchData();
+                                      setState(() {});
+                                    }
+                                  }
+                                : null,
+                            cells: [
+                              DataCell(Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  '${_data.length - index}',
+                                  textAlign: TextAlign.center,
+                                ),
+                              )),
+                              DataCell(Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  item.formatedPurchasedDate(),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )),
+                              DataCell(Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  item.price,
+                                  textAlign: TextAlign.center,
+                                ),
+                              )),
+                              DataCell(Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  item.employeeName.toString(),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )),
+                            ]);
+                      }),
                     ),
                   ),
                   if (_isLoading)

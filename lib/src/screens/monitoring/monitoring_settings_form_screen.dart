@@ -64,13 +64,10 @@ class _SettingsFormBody extends StatelessWidget {
                         const SizedBox(height: 15),
                         CustomInputField(
                           labelText: 'Intervalo de Envio',
-                          helperText: 'Ingresar Tiempo en segundos o minutos',
+                          helperText: 'Ingresar Tiempo en minutos',
                           prefixIcon: Icons.timer_outlined,
                           formProperty: 'intervalTimeDevice',
-                          initialValue: (int.parse(
-                                      settings.intervalTimeDevice ?? '600000') /
-                                  60000)
-                              .toStringAsFixed(2),
+                          initialValue: settings.intervalTimeDevice,
                           onChanged: (value) =>
                               settings.intervalTimeDevice = value,
                           length: 1,
@@ -80,7 +77,37 @@ class _SettingsFormBody extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        RadioTimer(),
+                        // RadioTimer(),
+                        const SizedBox(height: 10),
+                        CustomInputField(
+                          labelText: 'Altura del Tanque',
+                          helperText: 'Ingresar altura en centimetros',
+                          prefixIcon: Icons.height_outlined,
+                          formProperty: 'height',
+                          initialValue: double.parse(settings.height ?? '0')
+                              .toStringAsFixed(2),
+                          onChanged: (value) => settings.height = value,
+                          length: 1,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^(\d+)?\.?\d{0,2}'))
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        CustomInputField(
+                          labelText: 'Ancho del Tanque',
+                          helperText: 'Ingresar ancho en centimetros',
+                          prefixIcon: Icons.width_full,
+                          formProperty: 'height',
+                          initialValue: double.parse(settings.width ?? '0')
+                              .toStringAsFixed(2),
+                          onChanged: (value) => settings.width = value,
+                          length: 1,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^(\d+)?\.?\d{0,2}'))
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -120,19 +147,6 @@ class _SettingsFormBody extends StatelessWidget {
                                   Navigator.of(context).pop();
                                   await Future.delayed(
                                       const Duration(seconds: 1));
-                                  if (settingsForm.timerInterval == 'min') {
-                                    settings.intervalTimeDevice = (int.parse(
-                                                settings.intervalTimeDevice ??
-                                                    '10') *
-                                            60000)
-                                        .toString();
-                                  } else {
-                                    settings.intervalTimeDevice = (int.parse(
-                                                settings.intervalTimeDevice ??
-                                                    '10') *
-                                            1000)
-                                        .toString();
-                                  }
                                   final resp = await districService
                                       .updateSettings(settings);
                                   settingsForm.setLoading(false);

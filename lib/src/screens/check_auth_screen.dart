@@ -9,7 +9,7 @@ class CheckAuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context, listen: false);
-
+    authService.readProfile();
     return Scaffold(
         body: Center(
       child: FutureBuilder(
@@ -40,7 +40,7 @@ class CheckAuthScreen extends StatelessWidget {
                     ));
               });
             } else {
-              if (parts[2] == 'COBRADOR') {
+              if (parts[2] == 'LECTURADOR') {
                 Future.microtask(() {
                   Navigator.pushReplacement(
                       context,

@@ -1,5 +1,4 @@
 import 'package:facturacion/src/models/models.dart';
-import 'package:facturacion/src/screens/puchase/purchase_form_screen.dart';
 import 'package:facturacion/src/services/services.dart';
 import 'package:facturacion/src/themes/theme.dart';
 import 'package:facturacion/src/widgets/widgets.dart'
@@ -18,28 +17,28 @@ class PurchaseScreen extends StatefulWidget {
 class _PurchaseScreenState extends State<PurchaseScreen> {
   List<Purchase> _data = [];
   bool _isLoading = false;
-  int? selectedYear;
+  int selectedYear = DateTime.now().year;
   List<int> years = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchData();
     int currentYear = DateTime.now().year;
-    for (int i = currentYear; i >= 2022; i--) {
+    for (int i = currentYear; i >= 2023; i--) {
       years.add(i);
     }
+    _fetchData();
   }
 
   Future<void> _fetchData() async {
     setState(() {
       _isLoading = true;
+      _data = [];
     });
     final purchaseService =
         Provider.of<PurchaseService>(context, listen: false);
-    await purchaseService.getPurchases('', selectedYear ?? 2024, 12, 1, '-id');
+    await purchaseService.getPurchases('', selectedYear, 9999999, 1, 'id');
     _data = purchaseService.purchases;
-
     setState(() {
       _isLoading = false;
     });
@@ -49,7 +48,14 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   Widget build(BuildContext context) {
     final purchaseService =
         Provider.of<PurchaseService>(context, listen: false);
-
+    // Convertir las fechas en milisegundos y generar los puntos
+    final List<FlSpot> spots = List.generate(_data.length, (index) {
+      return FlSpot(
+        // double.parse('${_data[index].id}'),
+        double.parse('${index + 1}'),
+        double.parse(_data[index].price),
+      );
+    });
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tarifas'),
@@ -72,7 +78,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                 );
                 if (result != null && result == 'reload') {
                   setState(() {
-                    print("Datos recargados");
                     _fetchData();
                   });
                 }
@@ -115,9 +120,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                     }).toList(),
                     onChanged: (newValue) {
                       setState(() {
-                        selectedYear = newValue;
+                        selectedYear = newValue!;
                         _fetchData();
-                        print("Selector: $selectedYear");
                       });
                     },
                   ),
@@ -137,17 +141,20 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                           child: LineChartWidget(
-                            minX: 0,
-                            maxX: 11,
-                            minY: 0,
-                            maxY: 6,
-                            spots: _data.reversed
-                                .map((e) => FlSpot(
-                                      double.parse('${e.getMonth()}'),
-                                      // double.parse('${e.id}'),
-                                      double.parse(e.price),
-                                    ))
-                                .toList(),
+                            // Menor valor del eje X (fecha más antigua)
+                            minX: 0, //spots.first.x,
+                            // Mayor valor del eje X (fecha más reciente)
+                            maxX: 0, //spots.last.x,
+                            minY: 0, // Mínimo del eje Y
+                            maxY: 20, // Máximo del eje Y
+                            // spots: _data.reversed
+                            //     .map((e) => FlSpot(
+                            //           double.parse('${e.id}'),
+                            //           // double.parse('${e.id}'),
+                            //           double.parse(e.price),
+                            //         ))
+                            //     .toList(),
+                            spots: spots,
                             bottomTitleWidgets: _bottomTitleWidgets,
                             leftTitleWidgets: _leftTitleWidgets,
                           ),
@@ -164,46 +171,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       ),
     );
   }
-}
 
-Widget _bottomTitleWidgets(double value, TitleMeta meta) {
-  const style = TextStyle(fontSize: 11, fontWeight: FontWeight.bold);
-  String text;
-  switch (value.toInt()) {
-    // switch (value.toInt() % 12) {
-    case 0:
-      text = 'Ene';
-    case 1:
-      text = 'Feb';
-    case 2:
-      text = 'Mar';
-    case 3:
-      text = 'Abr';
-    case 4:
-      text = 'May';
-    case 5:
-      text = 'Jun';
-    case 6:
-      text = 'Jul';
-    case 7:
-      text = 'Ago';
-    case 8:
-      text = 'Sep';
-    case 9:
-      text = 'Oct';
-    case 10:
-      text = 'Nov';
-    case 11:
-      text = 'Dec';
-      break;
-    default:
-      text = '';
-      break;
+  Widget _bottomTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(fontSize: 11, fontWeight: FontWeight.bold);
+    String text = '${value.toInt()}';
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: Text(text, style: style),
+    );
   }
-  return SideTitleWidget(
-    axisSide: meta.axisSide,
-    child: Text(text, style: style),
-  );
 }
 
 Widget _leftTitleWidgets(double value, TitleMeta meta) {

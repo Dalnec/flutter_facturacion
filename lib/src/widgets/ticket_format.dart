@@ -265,7 +265,7 @@ class TicketFormat extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
               Text(
-                body.total,
+                '${body.total} Bs.',
                 style: const TextStyle(
                     fontSize: 20,
                     color: Colors.black,

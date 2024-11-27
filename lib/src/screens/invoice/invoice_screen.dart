@@ -85,7 +85,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
     profile = await storage.read(key: 'profile') ?? '';
   }
 
-  void setfiltersParams() {
+  void setfiltersParams() async {
+    final usuarioService = Provider.of<UsuarioService>(context, listen: false);
     if (_isSelected[0] == true) {
       filterParams['hasDebt'] = true;
     } else {
@@ -101,7 +102,12 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
       filterParams['makeInvoice'] = null;
       _isSelected = [false, false, true];
     }
-    _initFetchData();
+    // _initFetchData();
+    await usuarioService.getUsuarios(
+        _searchController.text,
+        filterParams['hasDebt'],
+        filterParams['makeInvoice'],
+        filterParams['status']);
     setState(() {});
   }
 
@@ -109,11 +115,12 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   Widget build(BuildContext context) {
     final usuarioService = Provider.of<UsuarioService>(context);
     final authService = Provider.of<AuthService>(context, listen: false);
+    authService.readProfile();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Generar Factura"),
         actions: [
-          if (profile == 'COBRADOR')
+          if (profile == 'LECTURADOR')
             IconButton(
                 onPressed: () {
                   ModularDialog.showModularDialog(
@@ -138,8 +145,10 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                       ElevatedButton(
                         onPressed: () async {
                           await Future.delayed(const Duration(seconds: 1));
-                          authService.logout();
-                          Navigator.pushReplacementNamed(context, 'login');
+                          await authService.logout();
+                          // Navigator.pushReplacementNamed(context, 'login');
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, "login", (r) => false);
                         },
                         child: const Text('Confirmar',
                             style: TextStyle(color: AppTheme.harp)),
@@ -169,26 +178,39 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                           ? null
                           : IconButton(
                               icon: const Icon(Icons.clear),
-                              onPressed: () {
+                              onPressed: () async {
                                 _searchController.clear();
-                                usuarioService.getUsuarios('', null, null, 'A');
+                                // usuarioService.getUsuarios('', null, null, 'A');
+                                await usuarioService.getUsuarios(
+                                    '',
+                                    filterParams['hasDebt'],
+                                    filterParams['makeInvoice'],
+                                    filterParams['status']);
                                 setState(() {});
                               },
                             ),
                       labelText: 'Buscar...',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.search),
-                        onPressed: () {
+                        onPressed: () async {
                           _scrollController.jumpTo(0);
-                          usuarioService.getUsuarios(
-                              _searchController.text, null, null, 'A');
+                          // usuarioService.getUsuarios( _searchController.text, null, null, 'A');
+                          await usuarioService.getUsuarios(
+                              _searchController.text,
+                              filterParams['hasDebt'],
+                              filterParams['makeInvoice'],
+                              filterParams['status']);
                         },
                       ),
                     ),
-                    onSubmitted: (value) {
+                    onSubmitted: (value) async {
                       _scrollController.jumpTo(0);
-                      usuarioService.getUsuarios(
-                          _searchController.text, null, null, 'A');
+                      // usuarioService.getUsuarios( _searchController.text, null, null, 'A');
+                      await usuarioService.getUsuarios(
+                          _searchController.text,
+                          filterParams['hasDebt'],
+                          filterParams['makeInvoice'],
+                          filterParams['status']);
                     },
                   ),
                 ),
@@ -223,8 +245,13 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
               child: RefreshIndicator(
                 color: AppTheme.primary,
                 backgroundColor: Colors.white.withOpacity(0.7),
-                onRefresh: () {
-                  return usuarioService.getUsuarios('', null, null, 'A');
+                onRefresh: () async {
+                  // return usuarioService.getUsuarios('', null, null, 'A');
+                  return await usuarioService.getUsuarios(
+                      _searchController.text,
+                      filterParams['hasDebt'],
+                      filterParams['makeInvoice'],
+                      filterParams['status']);
                 },
                 child: usuarioService.isLoading
                     ? const Center(child: CircularProgressIndicator())

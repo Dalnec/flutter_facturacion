@@ -10,8 +10,11 @@ class Monitoring {
   String status;
   String? observations;
   String percentage;
-  bool isConnected;
+  bool? isConnected;
   String battery;
+  double? liters;
+  String? height;
+  double? capacity;
 
   Monitoring({
     this.id,
@@ -22,8 +25,11 @@ class Monitoring {
     required this.status,
     this.observations,
     required this.percentage,
-    required this.isConnected,
+    this.isConnected,
     required this.battery,
+    this.liters,
+    this.height,
+    this.capacity,
   });
 
   String formatedReadDate() {
@@ -48,6 +54,9 @@ class Monitoring {
         percentage: json["percentage"],
         isConnected: json["isConnected"],
         battery: json["battery"],
+        liters: json["liters"],
+        height: json["height"],
+        capacity: json["capacity"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -61,5 +70,8 @@ class Monitoring {
         "percentage": percentage,
         "isConnected": isConnected,
         "battery": battery,
+        "liters": liters,
+        "height": height,
+        "capacity": capacity,
       };
 }

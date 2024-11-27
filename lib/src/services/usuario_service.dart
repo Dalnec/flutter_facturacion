@@ -5,8 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class UsuarioService extends ChangeNotifier {
-  // final String _baseUrl = 'facturacionapi.tsi.pe';
-  final String _baseUrl = '192.168.1.4:8000';
+  final String _baseUrl = 'facturacionapi.tsi.pe';
+  // final String _baseUrl = 'localhost:8000';
 
   List<Usuario> usuarios = [];
   late Usuario selectedUsuario = Usuario(

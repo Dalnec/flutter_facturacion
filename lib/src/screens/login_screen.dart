@@ -107,12 +107,13 @@ class _LoginForm extends StatelessWidget {
                             loginForm.email, loginForm.password);
 
                         if (errorMessage == null) {
+                          await authService.readProfile();
                           if (authService.user['profile_description'] ==
                               'USUARIO') {
                             Navigator.pushReplacementNamed(context, 'userinfo');
                           }
                           if (authService.user['profile_description'] ==
-                              'COBRADOR') {
+                              'LECTURADOR') {
                             Navigator.pushReplacementNamed(context, 'invoice');
                           }
                           if (authService.user['profile_description'] ==

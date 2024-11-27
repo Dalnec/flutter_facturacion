@@ -74,7 +74,8 @@ class LineChartWidget extends StatelessWidget {
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval: 0.5,
+              // interval: 0.5,
+              interval: 1,
               getTitlesWidget: leftTitleWidgets,
               reservedSize: 30,
             ),
@@ -84,9 +85,9 @@ class LineChartWidget extends StatelessWidget {
           show: true,
           border: Border.all(color: const Color(0xff37434d), width: 1),
         ),
-        minX: minX, // Valor mínimo del eje X
+        // minX: minX, // Valor mínimo del eje X
         // maxX: maxX, // Valor máximo del eje X
-        minY: minY, // Valor mínimo del eje Y
+        // minY: minY, // Valor mínimo del eje Y
         // maxY: maxY, // Valor máximo del eje Y
         lineBarsData: [
           LineChartBarData(

@@ -21,6 +21,7 @@ class UserInfoScreen extends StatefulWidget {
 
 class _UserInfoScreenState extends State<UserInfoScreen> {
   int _selectedIndex = 0;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -29,10 +30,16 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   }
 
   Future<void> _fetchData() async {
+    setState(() {
+      isLoading = true;
+    });
     final usuarioService = Provider.of<UsuarioService>(context, listen: false);
     const storage = FlutterSecureStorage();
     final usuario = await storage.read(key: 'usuario');
     await usuarioService.getUsuario('$usuario');
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void _onItemTapped(int index) {
@@ -51,15 +58,29 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Información de Usuario'),
+        actions: [
+          // reload
+          if (_selectedIndex == 1)
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: isLoading
+                  ? null
+                  : () {
+                      _fetchData();
+                    },
+            ),
+        ],
       ),
       body: _selectedIndex == 0
           ? _NestedScrollViewWidget(usuarioService: usuarioService)
           : _selectedIndex == 1
-              ? SizedBox(
-                  height: 270,
-                  child: CardFullInfoUserInvoice(
-                      usuario: usuarioService.selectedUsuario),
-                )
+              ? isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : SizedBox(
+                      height: 300,
+                      child: CardFullInfoUserInvoice(
+                          usuario: usuarioService.selectedUsuario),
+                    )
               : const _CardContainer(child: FormChangePassword()),
       drawer: NavigationDrawer(
         onDestinationSelected: _onItemTapped,
@@ -164,8 +185,9 @@ final List<NavDestination> destinations = <NavDestination>[
           ElevatedButton(
             onPressed: () async {
               Navigator.of(context).pop();
-              Provider.of<AuthService>(context, listen: false).logout();
-              Navigator.pushReplacementNamed(context, 'login');
+              await Provider.of<AuthService>(context, listen: false).logout();
+              // Navigator.pushReplacementNamed(context, 'login');
+              Navigator.pushNamedAndRemoveUntil(context, "login", (r) => false);
             },
             child:
                 const Text('Confirmar', style: TextStyle(color: AppTheme.harp)),
@@ -197,7 +219,7 @@ class _NestedScrollViewWidgetState extends State<_NestedScrollViewWidget> {
   void initState() {
     super.initState();
     int currentYear = DateTime.now().year;
-    for (int i = currentYear; i >= 2020; i--) {
+    for (int i = currentYear; i >= 2023; i--) {
       years.add(i);
     }
   }

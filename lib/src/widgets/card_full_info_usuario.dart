@@ -10,7 +10,7 @@ class CardFullInfoUserInvoice extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       key: const Key('card_container'),
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
       child: Container(
         padding:
             const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 10),
@@ -21,7 +21,7 @@ class CardFullInfoUserInvoice extends StatelessWidget {
           code: usuario.id.toString(),
           family: usuario.family,
           addres: usuario.address,
-          phone: usuario.phone,
+          phone: usuario.phone ?? '-',
           names: usuario.names,
           lastnames: usuario.lastnames,
           ci: usuario.ci,

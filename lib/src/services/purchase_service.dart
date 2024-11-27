@@ -6,8 +6,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class PurchaseService extends ChangeNotifier {
-  // final String _baseUrl = 'facturacionapi.tsi.pe';
-  final String _baseUrl = '192.168.1.4:8000';
+  final String _baseUrl = 'facturacionapi.tsi.pe';
+  // final String _baseUrl = 'localhost:8000';
 
   List<Purchase> purchases = [];
   PurchaseResponse response = PurchaseResponse(count: 0, results: []);
@@ -68,6 +68,34 @@ class PurchaseService extends ChangeNotifier {
     purchases = response.results;
     isLoading = false;
     notifyListeners();
+  }
+
+  Future saveOrCreatePurchase(Purchase purchase) async {
+    final bool status;
+    isSaving = true;
+    notifyListeners();
+    if (purchase.id == null) {
+      status = await createPurchase(purchase);
+    } else {
+      status = await updatePurchase(purchase);
+    }
+    isSaving = false;
+    notifyListeners();
+    return status;
+  }
+
+  Future updatePurchase(Purchase purchase) async {
+    purchase.purchasedDate = purchase.getActualDateTime();
+    purchase.employee = int.parse('${await storage.read(key: 'employee')}');
+    final url = Uri.http(_baseUrl, '/api/purchase/${purchase.id}/');
+    final resp = await http.put(
+      url,
+      body: purchase.toRawJson(),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    return resp.statusCode == 200 ? true : false;
   }
 
   Future createPurchase(Purchase purchase) async {

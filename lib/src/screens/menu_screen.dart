@@ -37,9 +37,11 @@ class MenuScreen extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () async {
                         await Future.delayed(const Duration(seconds: 1));
-                        Provider.of<AuthService>(context, listen: false)
+                        await Provider.of<AuthService>(context, listen: false)
                             .logout();
-                        Navigator.pushReplacementNamed(context, 'login');
+                        // Navigator.pushReplacementNamed(context, 'login');
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, "login", (r) => false);
                       },
                       child: const Text('Confirmar',
                           style: TextStyle(color: AppTheme.harp)),

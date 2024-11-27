@@ -1,4 +1,3 @@
-import 'package:facturacion/src/screens/screens.dart' show TicketScreen;
 import 'package:facturacion/src/themes/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:facturacion/src/models/models.dart';
@@ -72,10 +71,12 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
     if (newData.isEmpty) {
       _hasMoreData = false;
     } else {
+      if (!mounted) return;
       setState(() {
         _data.addAll(newData);
       });
     }
+    if (!mounted) return;
     setState(() {
       _isLoading = false;
     });
@@ -83,6 +84,7 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
 
   void _loadMoreData() {
     if (!_isLoading && _hasMoreData) {
+      if (!mounted) return;
       setState(() {
         _currentPage++;
       });
@@ -156,7 +158,7 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
                                   if (result != null && result == 'reload') {
                                     setState(() {
                                       print("Datos recargados");
-                                      _fetchData();
+                                      // _fetchData();
                                     });
                                   }
                                 },

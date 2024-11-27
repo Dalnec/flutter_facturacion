@@ -81,4 +81,20 @@ class Purchase {
         "employee": employee,
         "employee_name": employeeName,
       };
+
+  Purchase copy() {
+    return Purchase(
+      id: id,
+      created: created,
+      modified: modified,
+      purchasedDate: purchasedDate,
+      total: total,
+      liters: liters,
+      active: active,
+      price: price,
+      observations: observations,
+      employee: employee,
+      employeeName: employeeName,
+    );
+  }
 }

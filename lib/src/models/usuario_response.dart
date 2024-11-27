@@ -9,8 +9,8 @@ class Usuario {
   String ci;
   String names;
   String lastnames;
-  String gender;
-  String phone;
+  String? gender;
+  String? phone;
   String? email;
   String family;
   String address;
@@ -23,8 +23,9 @@ class Usuario {
   bool? hasDebt;
   bool makeInvoice;
   String? code;
-  String? lastMeasured;
+  String? lastMeasured; // solo al registrar primera vez
   bool restart;
+  String? lastInvoice;
 
   Usuario({
     this.id,
@@ -33,8 +34,8 @@ class Usuario {
     required this.ci,
     required this.names,
     required this.lastnames,
-    required this.gender,
-    required this.phone,
+    this.gender,
+    this.phone,
     this.email,
     required this.family,
     required this.address,
@@ -47,6 +48,7 @@ class Usuario {
     this.code,
     this.lastMeasured,
     required this.restart,
+    this.lastInvoice,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) => Usuario(
@@ -70,6 +72,7 @@ class Usuario {
         code: json["code"],
         lastMeasured: json["last_measured"],
         restart: json["restart"],
+        lastInvoice: json["lastInvoice"],
       );
 
   // String usuarioToJson(Usuario data) => json.encode(data.toJson());
@@ -98,6 +101,7 @@ class Usuario {
         "code": code,
         "last_measured": lastMeasured,
         "restart": restart,
+        "lastInvoice": lastInvoice,
       };
 
   Usuario copy() => Usuario(
@@ -121,5 +125,6 @@ class Usuario {
         code: code,
         lastMeasured: lastMeasured,
         restart: restart,
+        lastInvoice: lastInvoice,
       );
 }

@@ -58,7 +58,7 @@ class _TicketScreenState extends State<TicketScreen> {
     final header = ticketData.header;
     final body = ticketData.body;
     // final Uri url = Uri.parse(
-    //     "https://wa.me/59165351938?text=Hello\nhttp://192.168.1.4:8000/api/ticket/bfeef66f-bfed-409a-aac2-12f56290bbe7/");
+    //     "https://wa.me/59165351938?text=Hello\nhttp://localhost:8000/api/ticket/bfeef66f-bfed-409a-aac2-12f56290bbe7/");
     final Uri url = Uri.parse(
         "https://api.whatsapp.com/send?phone=591${usuario.phone}&text=Hola *${header.fullName}*, puede acceder a su recibo *${body.actualMonth}* ingresando al siguiente enlace:\nhttp://facturacionapi.tsi.pe/api/ticket/${widget.invoice.uuid}/");
     if (!await launchUrl(url)) {
@@ -122,7 +122,9 @@ class _TicketScreenState extends State<TicketScreen> {
       appBar: AppBar(
         title: const Text('Vista Previa/Acciones'),
         actions: [
-          if (widget.status != 'P' && widget.profile != 'USUARIO')
+          // if (widget.status != 'P' && widget.profile != 'USUARIO')
+          if ((widget.profile == 'LECTURADOR' || widget.status != 'P') &&
+              widget.profile != 'USUARIO')
             IconButton(
                 onPressed: () {
                   ModularDialog.showModularDialog(
@@ -145,6 +147,7 @@ class _TicketScreenState extends State<TicketScreen> {
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'^(\d+)?\.?\d{0,2}'))
                             ],
+                            keyboardType: TextInputType.number,
                             onChanged: (value) {
                               reading = double.parse(value);
                             },
@@ -170,10 +173,10 @@ class _TicketScreenState extends State<TicketScreen> {
 
                           final invoice = widget.invoice.copy();
                           invoice.measured = reading.toString();
-                          invoice.total = ((reading -
-                                      double.parse(invoice.previosMeasured)) *
-                                  double.parse(invoice.price))
-                              .toStringAsFixed(2);
+                          // invoice.total = ((reading -
+                          //             double.parse(invoice.previosMeasured)) *
+                          //         double.parse(invoice.price))
+                          //     .toStringAsFixed(2);
 
                           final res =
                               await invoiceService.updateInvoice(invoice);
@@ -184,11 +187,11 @@ class _TicketScreenState extends State<TicketScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                   content:
-                                      Text('Lectura edidata correctamente')),
+                                      Text('Edición de Lectura correcta :)')),
                             );
-                            widget.invoice.measured = invoice.measured;
-                            widget.invoice.total = invoice.total;
-                            widget.invoice.ticket = res["invoice"]["ticket"];
+                            widget.invoice.measured = res["invoice"].measured;
+                            widget.invoice.total = res["invoice"].total;
+                            widget.invoice.ticket = res["invoice"].ticket;
                             Navigator.pop(context, 'reload');
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -255,6 +258,8 @@ class CustomFlotingActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final usuario =
+        Provider.of<UsuarioService>(context, listen: false).selectedUsuario;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -263,7 +268,7 @@ class CustomFlotingActions extends StatelessWidget {
           child: const Icon(Icons.offline_share, color: Colors.white),
           onPressed: () => shareImageTicketFn(),
         ),
-        if (isPaid != 'P' && profile != 'USUARIO')
+        if (isPaid != 'P' && profile == 'ADMINISTRADOR')
           FloatingActionButton.extended(
             label: const Text("COBRAR", style: TextStyle(color: Colors.white)),
             heroTag: 'paymentHeroTag',
@@ -273,8 +278,8 @@ class CustomFlotingActions extends StatelessWidget {
           ),
         FloatingActionButton(
           heroTag: 'shareLinkHeroTag',
+          onPressed: usuario.phone != null ? () => shareLinkTicketFn() : null,
           child: const Icon(Icons.share, color: Colors.white),
-          onPressed: () => shareLinkTicketFn(),
         ),
       ],
     );

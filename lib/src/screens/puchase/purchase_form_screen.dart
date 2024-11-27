@@ -172,7 +172,9 @@ class _PurchaseFormProviderBody extends StatelessWidget {
                                   await Future.delayed(
                                       const Duration(seconds: 1));
                                   final resp = await purchaseService
-                                      .createPurchase(purchase);
+                                      .saveOrCreatePurchase(purchase);
+                                  // final resp = await purchaseService
+                                  //     .createPurchase(purchase);
                                   purchaseForm.setLoading(false);
                                   if (!resp) {
                                     ScaffoldMessenger.of(context).showSnackBar(
