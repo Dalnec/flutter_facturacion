@@ -41,7 +41,7 @@ class AuthService extends ChangeNotifier {
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/login/');
+    final url = Uri.https(_baseUrl, '/api/login/');
 
     final resp = await http.post(url, body: authData);
     final Map<String, dynamic> decodedResp = json.decode(resp.body);

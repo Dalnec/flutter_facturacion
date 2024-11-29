@@ -196,7 +196,7 @@ class BarChartWidgetState extends State<BarChartWidget> {
                           .map(
                             (data) => makeGroupData(
                               data.getMonth(),
-                              double.tryParse(data.measured) ?? 0,
+                              data.measuredDiff ?? 0,
                               width: barsWidth,
                             ),
                           )

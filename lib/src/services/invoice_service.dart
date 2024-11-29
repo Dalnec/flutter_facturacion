@@ -37,7 +37,7 @@ class InvoiceService extends ChangeNotifier {
 
   Future updateInvoice(Invoice invoice) async {
     // final url = Uri.https(_baseUrl, 'Invoice/${Invoice.id}',
-    final url = Uri.http(_baseUrl, 'api/invoice/${invoice.id}/');
+    final url = Uri.https(_baseUrl, 'api/invoice/${invoice.id}/');
     /* {'Token': await storage.read(key: 'token')} */
     final resp = await http.put(
       url,
@@ -60,7 +60,7 @@ class InvoiceService extends ChangeNotifier {
 
   Future<Invoice> createInvoice(Invoice invoice) async {
     // final url = Uri.https(_baseUrl, 'Invoice/${Invoice.id}',
-    final url = Uri.http(_baseUrl, 'api/invoice/');
+    final url = Uri.https(_baseUrl, 'api/invoice/');
     /* {'Token': await storage.read(key: 'token')} */
     final employee = await storage.read(key: 'employee');
     invoice.employee = int.parse(employee!);
@@ -92,7 +92,7 @@ class InvoiceService extends ChangeNotifier {
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/invoice/', params);
+    final url = Uri.https(_baseUrl, '/api/invoice/', params);
     final resp = await http.get(url);
     final res = json.decode(resp.body);
     if (!res.containsKey('detail')) {
@@ -117,7 +117,7 @@ class InvoiceService extends ChangeNotifier {
     };
     if (_count > invoices.length) {
       // final url = Uri.https(_baseUrl, '/api/login/');
-      final url = Uri.http(_baseUrl, '/api/invoice/', params);
+      final url = Uri.https(_baseUrl, '/api/invoice/', params);
       final resp = await http.get(url);
       final invoiceResponse = InvoiceResponse.fromJson(json.decode(resp.body));
       invoices = [...invoices, ...invoiceResponse.results];
@@ -137,7 +137,7 @@ class InvoiceService extends ChangeNotifier {
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/invoice/', params);
+    final url = Uri.https(_baseUrl, '/api/invoice/', params);
     final resp = await http.get(url);
     final res = json.decode(resp.body);
     if (!res.containsKey('detail')) {
@@ -150,7 +150,7 @@ class InvoiceService extends ChangeNotifier {
   }
 
   Future updateStatusInvoice(Invoice invoice) async {
-    final url = Uri.http(_baseUrl, 'api/invoice/${invoice.id}/change_status/');
+    final url = Uri.https(_baseUrl, 'api/invoice/${invoice.id}/change_status/');
     final resp = await http.put(
       url,
       body: '{"status": "${invoice.status}"}',

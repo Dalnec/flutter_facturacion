@@ -31,7 +31,7 @@ class DistricService extends ChangeNotifier {
   }
 
   Future updateDistric(Distric distric) async {
-    final url = Uri.http(_baseUrl, 'api/distric/${distric.id}/');
+    final url = Uri.https(_baseUrl, 'api/distric/${distric.id}/');
     /* {'Token': await storage.read(key: 'token')} */
     final resp = await http.put(
       url,
@@ -49,7 +49,7 @@ class DistricService extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final url = Uri.http(_baseUrl, 'api/distric');
+    final url = Uri.https(_baseUrl, 'api/distric');
     final resp = await http.get(url);
     final districResponse = DistricResponse.fromJson(json.decode(resp.body));
     distric = districResponse.results[0];
@@ -62,7 +62,7 @@ class DistricService extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final url = Uri.http(_baseUrl, 'api/distric/1/get_settings/');
+    final url = Uri.https(_baseUrl, 'api/distric/1/get_settings/');
     final resp = await http.get(url);
     settings = Settings.fromJson(json.decode(resp.body));
 
@@ -72,7 +72,7 @@ class DistricService extends ChangeNotifier {
 
   Future updateSettings(Settings settings) async {
     final url =
-        Uri.http(_baseUrl, 'api/distric/${distric.id}/update_settings/');
+        Uri.https(_baseUrl, 'api/distric/${distric.id}/update_settings/');
     /* {'Token': await storage.read(key: 'token')} */
     final resp = await http.put(
       url,

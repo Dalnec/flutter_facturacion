@@ -40,7 +40,7 @@ class MonitoringService extends ChangeNotifier {
       'ordering': ordering,
     };
 
-    final url = Uri.http(_baseUrl, '/api/monitoring/', params);
+    final url = Uri.https(_baseUrl, '/api/monitoring/', params);
     final resp = await http.get(url);
     final res = json.decode(resp.body);
     if (!res.containsKey('detail')) {
@@ -68,7 +68,7 @@ class MonitoringService extends ChangeNotifier {
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/monitoring/', params);
+    final url = Uri.https(_baseUrl, '/api/monitoring/', params);
     final resp = await http.get(url);
     // print(resp.body);
     response = MonitoringResponse.fromJson(json.decode(resp.body));
@@ -79,7 +79,7 @@ class MonitoringService extends ChangeNotifier {
 
   Future getLastReading() async {
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/monitoring/get_last/');
+    final url = Uri.https(_baseUrl, '/api/monitoring/get_last/');
     final resp = await http.get(url);
     // print(resp.body);
     lastMonitoring = Monitoring.fromJson(json.decode(resp.body));
@@ -94,7 +94,7 @@ class MonitoringService extends ChangeNotifier {
       'ordering': ordering,
     };
 
-    final url = Uri.http(_baseUrl, '/api/monitoring/get_monitorings/', params);
+    final url = Uri.https(_baseUrl, '/api/monitoring/get_monitorings/', params);
     final resp = await http.get(url);
     final List<Monitoring> listMonitorings = [];
     for (var item in json.decode(resp.body)) {

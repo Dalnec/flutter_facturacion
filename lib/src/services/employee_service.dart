@@ -49,7 +49,7 @@ class EmployeeService extends ChangeNotifier {
   }
 
   Future<bool> updateEmployee(Employee employee) async {
-    final url = Uri.http(_baseUrl, 'api/employee/${employee.id}/');
+    final url = Uri.https(_baseUrl, 'api/employee/${employee.id}/');
     final resp = await http.put(
       url,
       body: employee.toRawJson(),
@@ -67,7 +67,7 @@ class EmployeeService extends ChangeNotifier {
   }
 
   Future<bool> createEmployee(Employee employee) async {
-    final url = Uri.http(_baseUrl, 'api/employee/');
+    final url = Uri.https(_baseUrl, 'api/employee/');
     employee.username = employee.ci.toString();
     employee.password = employee.ci.toString();
     final sysEmployee = await storage.read(key: 'employee');
@@ -99,7 +99,7 @@ class EmployeeService extends ChangeNotifier {
       'search': search,
     };
 
-    final url = Uri.http(_baseUrl, '/api/employee/', params);
+    final url = Uri.https(_baseUrl, '/api/employee/', params);
     final resp = await http.get(url);
     final employeeResponse = EmployeeResponse.fromJson(json.decode(resp.body));
     _count = employeeResponse.count;
@@ -113,7 +113,7 @@ class EmployeeService extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final url = Uri.http(_baseUrl, '/api/employee/$id/');
+    final url = Uri.https(_baseUrl, '/api/employee/$id/');
     final resp = await http.get(url);
     final employee = Employee.fromJson(json.decode(resp.body));
 
@@ -132,7 +132,7 @@ class EmployeeService extends ChangeNotifier {
       'search': search,
     };
     if (_count > employees.length) {
-      final url = Uri.http(_baseUrl, '/api/employee/', params);
+      final url = Uri.https(_baseUrl, '/api/employee/', params);
       final resp = await http.get(url);
       final employeeResponse =
           EmployeeResponse.fromJson(json.decode(resp.body));
@@ -143,7 +143,7 @@ class EmployeeService extends ChangeNotifier {
   }
 
   Future<bool> changePassword(String id, String password) async {
-    final url = Uri.http(_baseUrl, 'api/employee/$id/change_password/');
+    final url = Uri.https(_baseUrl, 'api/employee/$id/change_password/');
     final resp = await http.put(
       url,
       body: '{"password": "$password"}',
@@ -155,7 +155,7 @@ class EmployeeService extends ChangeNotifier {
   }
 
   Future<bool> changeStatus(String id, String status) async {
-    final url = Uri.http(_baseUrl, 'api/employee/$id/change_status/');
+    final url = Uri.https(_baseUrl, 'api/employee/$id/change_status/');
     final resp = await http.put(
       url,
       body: '{"status": "$status"}',

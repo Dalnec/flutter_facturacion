@@ -49,7 +49,7 @@ class UsuarioService extends ChangeNotifier {
 
   Future<String> updateUsuario(Usuario usuario) async {
     // final url = Uri.https(_baseUrl, 'usuario/${usuario.id}',
-    final url = Uri.http(_baseUrl, 'api/usuario/${usuario.id}/');
+    final url = Uri.https(_baseUrl, 'api/usuario/${usuario.id}/');
     /* {'Token': await storage.read(key: 'token')} */
     final resp = await http.put(
       url,
@@ -69,7 +69,7 @@ class UsuarioService extends ChangeNotifier {
 
   Future<String?> createUsuario(Usuario usuario) async {
     // final url = Uri.https(_baseUrl, 'usuario/${usuario.id}',
-    final url = Uri.http(_baseUrl, 'api/usuario/');
+    final url = Uri.https(_baseUrl, 'api/usuario/');
     /* {'Token': await storage.read(key: 'token')} */
     usuario.username = usuario.ci.toString();
     usuario.password = usuario.ci.toString();
@@ -107,10 +107,12 @@ class UsuarioService extends ChangeNotifier {
     };
 
     // print(params);
-    final url = Uri.http(_baseUrl, '/api/usuario/', params);
+    final url = Uri.https(_baseUrl, '/api/usuario/', params);
     // print('getUsuarios: $url');
     final resp = await http.get(url);
-    final usuarioResponse = UsuarioResponse.fromJson(json.decode(resp.body));
+    final decodedData = utf8.decode(resp.bodyBytes);
+    final jsonData = jsonDecode(decodedData);
+    final usuarioResponse = UsuarioResponse.fromJson(jsonData);
     _count = usuarioResponse.count;
     usuarios = usuarioResponse.results;
 
@@ -123,9 +125,11 @@ class UsuarioService extends ChangeNotifier {
     notifyListeners();
 
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/usuario/$id/');
+    final url = Uri.https(_baseUrl, '/api/usuario/$id/');
     final resp = await http.get(url);
-    final usuario = Usuario.fromJson(json.decode(resp.body));
+    final decodedData = utf8.decode(resp.bodyBytes);
+    final jsonData = jsonDecode(decodedData);
+    final usuario = Usuario.fromJson(jsonData);
 
     selectedUsuario = usuario;
 
@@ -152,7 +156,7 @@ class UsuarioService extends ChangeNotifier {
     // print("params: $params");
     if (_count > usuarios.length) {
       // final url = Uri.https(_baseUrl, '/api/login/');
-      final url = Uri.http(_baseUrl, '/api/usuario/', params);
+      final url = Uri.https(_baseUrl, '/api/usuario/', params);
       // print('loadMoreUsuarios: $url');
       final resp = await http.get(url);
       final res = json.decode(resp.body);
@@ -182,7 +186,7 @@ class UsuarioService extends ChangeNotifier {
   }
 
   Future<bool> changePassword(String id, String password) async {
-    final url = Uri.http(_baseUrl, 'api/usuario/$id/change_password/');
+    final url = Uri.https(_baseUrl, 'api/usuario/$id/change_password/');
     final resp = await http.put(
       url,
       body: '{"password": "$password"}',
@@ -195,7 +199,7 @@ class UsuarioService extends ChangeNotifier {
   }
 
   Future<bool> changeUsuarioStatus(int id, String status) async {
-    final url = Uri.http(_baseUrl, 'api/usuario/$id/change_status/');
+    final url = Uri.https(_baseUrl, 'api/usuario/$id/change_status/');
     final resp = await http.put(
       url,
       body: '{"status": "$status"}',
@@ -214,7 +218,7 @@ class UsuarioService extends ChangeNotifier {
   }
 
   Future<bool> restartUsuarioDetail(int id, UsuarioDetail? data) async {
-    final url = Uri.http(_baseUrl, '/api/usuario/$id/restart_measured/');
+    final url = Uri.https(_baseUrl, '/api/usuario/$id/restart_measured/');
     final resp = await http.put(
       url,
       body: data!.toRawJson(),

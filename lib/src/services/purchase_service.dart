@@ -34,7 +34,7 @@ class PurchaseService extends ChangeNotifier {
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/purchase/', params);
+    final url = Uri.https(_baseUrl, '/api/purchase/', params);
     final resp = await http.get(url);
     final res = json.decode(resp.body);
     if (!res.containsKey('detail')) {
@@ -62,7 +62,7 @@ class PurchaseService extends ChangeNotifier {
     };
 
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/purchase/', params);
+    final url = Uri.https(_baseUrl, '/api/purchase/', params);
     final resp = await http.get(url);
     response = PurchaseResponse.fromJson(json.decode(resp.body));
     purchases = response.results;
@@ -87,7 +87,7 @@ class PurchaseService extends ChangeNotifier {
   Future updatePurchase(Purchase purchase) async {
     purchase.purchasedDate = purchase.getActualDateTime();
     purchase.employee = int.parse('${await storage.read(key: 'employee')}');
-    final url = Uri.http(_baseUrl, '/api/purchase/${purchase.id}/');
+    final url = Uri.https(_baseUrl, '/api/purchase/${purchase.id}/');
     final resp = await http.put(
       url,
       body: purchase.toRawJson(),
@@ -101,7 +101,7 @@ class PurchaseService extends ChangeNotifier {
   Future createPurchase(Purchase purchase) async {
     purchase.purchasedDate = purchase.getActualDateTime();
     purchase.employee = int.parse('${await storage.read(key: 'employee')}');
-    final url = Uri.http(_baseUrl, '/api/purchase/');
+    final url = Uri.https(_baseUrl, '/api/purchase/');
     final resp = await http.post(
       url,
       body: purchase.toRawJson(),
@@ -113,7 +113,7 @@ class PurchaseService extends ChangeNotifier {
   }
 
   Future getLastPurchase() async {
-    final url = Uri.http(_baseUrl, '/api/purchase/get_last_purchase/');
+    final url = Uri.https(_baseUrl, '/api/purchase/get_last_purchase/');
     final resp = await http.get(url);
     if (resp.statusCode != 200) {
       lastPurchase =

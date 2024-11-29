@@ -42,7 +42,7 @@ class UsuarioDetailDetailService extends ChangeNotifier {
   }
 
   Future<String> updateUsuarioDetail(UsuarioDetail detail) async {
-    final url = Uri.http(_baseUrl, 'api/usuariodetail/${detail.id}/');
+    final url = Uri.https(_baseUrl, 'api/usuariodetail/${detail.id}/');
     final resp = await http.put(
       url,
       body: detail.toRawJson(),
@@ -59,7 +59,7 @@ class UsuarioDetailDetailService extends ChangeNotifier {
   }
 
   Future<String?> createUsuarioDetail(UsuarioDetail detail) async {
-    final url = Uri.http(_baseUrl, 'api/usuariodetail/');
+    final url = Uri.https(_baseUrl, 'api/usuariodetail/');
 
     final resp = await http.post(
       url,
@@ -86,7 +86,7 @@ class UsuarioDetailDetailService extends ChangeNotifier {
       'usuario': usuario,
     };
 
-    final url = Uri.http(_baseUrl, '/api/usuariodetail/', params);
+    final url = Uri.https(_baseUrl, '/api/usuariodetail/', params);
     // print('getUsuarioDetails: $url');
     final resp = await http.get(url);
     // print(resp.body);
@@ -104,7 +104,7 @@ class UsuarioDetailDetailService extends ChangeNotifier {
     notifyListeners();
 
     // final url = Uri.https(_baseUrl, '/api/login/');
-    final url = Uri.http(_baseUrl, '/api/usuario/$id/');
+    final url = Uri.https(_baseUrl, '/api/usuario/$id/');
     final resp = await http.get(url);
     final usuario = UsuarioDetail.fromJson(json.decode(resp.body));
 
@@ -123,7 +123,7 @@ class UsuarioDetailDetailService extends ChangeNotifier {
       'usuario': usuario,
     };
     if (_count > details.length) {
-      final url = Uri.http(_baseUrl, '/api/usuario/', params);
+      final url = Uri.https(_baseUrl, '/api/usuario/', params);
       final resp = await http.get(url);
       final res = json.decode(resp.body);
       if (!res.containsKey('detail')) {
@@ -152,7 +152,7 @@ class UsuarioDetailDetailService extends ChangeNotifier {
   // }
 
   // Future<bool> changeUsuarioDetailStatus(int id, String status) async {
-  //   final url = Uri.http(_baseUrl, 'api/usuario/$id/change_status/');
+  //   final url = Uri.https(_baseUrl, 'api/usuario/$id/change_status/');
   //   final resp = await http.put(
   //     url,
   //     body: '{"status": "$status"}',

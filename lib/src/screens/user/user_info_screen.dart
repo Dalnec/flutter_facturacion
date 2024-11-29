@@ -81,7 +81,10 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                       child: CardFullInfoUserInvoice(
                           usuario: usuarioService.selectedUsuario),
                     )
-              : const _CardContainer(child: FormChangePassword()),
+              : _CardContainer(
+                  child: FormChangePassword(
+                  usuarioId: usuarioService.selectedUsuario.id,
+                )),
       drawer: NavigationDrawer(
         onDestinationSelected: _onItemTapped,
         selectedIndex: _selectedIndex,

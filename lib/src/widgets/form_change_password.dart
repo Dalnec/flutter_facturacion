@@ -30,7 +30,7 @@ class _FormChangePasswordState extends State<FormChangePassword> {
       _isLoading = true;
     });
     final bool resp;
-    if (!widget.usuarioId.toString().isNotEmpty) {
+    if (widget.usuarioId.toString().isNotEmpty) {
       final usuarioService =
           Provider.of<UsuarioService>(context, listen: false);
       final usuario = usuarioService.selectedUsuario;
@@ -63,7 +63,7 @@ class _FormChangePasswordState extends State<FormChangePassword> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Contraseña actualizada correctamente')),
     );
-    if (widget.usuarioId.toString().isNotEmpty) {
+    if (!widget.usuarioId.toString().isNotEmpty) {
       Navigator.pop(context);
     }
   }

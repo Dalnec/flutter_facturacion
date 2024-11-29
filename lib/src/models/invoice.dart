@@ -16,6 +16,7 @@ class Invoice {
   String period;
   String previosMeasured;
   String? uuid;
+  double? measuredDiff;
 
   Invoice({
     this.id,
@@ -33,6 +34,7 @@ class Invoice {
     required this.ticket,
     required this.previosMeasured,
     this.uuid,
+    this.measuredDiff,
   });
 
   int getMonth() {
@@ -63,6 +65,7 @@ class Invoice {
         ticket: json["ticket"],
         previosMeasured: json["previosMeasured"],
         uuid: json["uuid"],
+        measuredDiff: json["measured_diff"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -81,22 +84,25 @@ class Invoice {
         "ticket": ticket,
         "previosMeasured": previosMeasured,
         "uuid": uuid,
+        "measured_diff": measuredDiff,
       };
 
   Invoice copy() => Invoice(
-      id: id,
-      created: created,
-      modified: modified,
-      readDate: readDate,
-      measured: measured,
-      price: price,
-      total: total,
-      status: status,
-      observations: observations,
-      employee: employee,
-      usuario: usuario,
-      period: period,
-      ticket: ticket,
-      previosMeasured: previosMeasured,
-      uuid: uuid);
+        id: id,
+        created: created,
+        modified: modified,
+        readDate: readDate,
+        measured: measured,
+        price: price,
+        total: total,
+        status: status,
+        observations: observations,
+        employee: employee,
+        usuario: usuario,
+        period: period,
+        ticket: ticket,
+        previosMeasured: previosMeasured,
+        uuid: uuid,
+        measuredDiff: measuredDiff,
+      );
 }
