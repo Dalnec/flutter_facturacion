@@ -2,12 +2,24 @@ import 'package:facturacion/src/screens/reports/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter_downloader/flutter_downloader.dart';
+
 import 'package:facturacion/src/services/services.dart';
 import 'package:facturacion/src/screens/screens.dart';
 import 'package:facturacion/src/themes/theme.dart';
 import 'package:facturacion/src/providers/bottom_navigation_bar_provider.dart';
 
-void main() => runApp(const AppState());
+// void main() => runApp(const AppState());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // await FlutterDownloader.initialize(
+  //   debug: true,
+  //   ignoreSsl: true,
+  // );
+
+  runApp(const AppState());
+}
 
 class AppState extends StatelessWidget {
   const AppState({super.key});

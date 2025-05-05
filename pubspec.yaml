@@ -46,6 +46,7 @@ dependencies:
   share_plus: ^10.0.2
   url_launcher: ^6.3.0
   widgets_to_image: ^1.0.0
+  flutter_downloader: ^1.11.8
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1

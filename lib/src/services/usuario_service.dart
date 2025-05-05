@@ -194,7 +194,6 @@ class UsuarioService extends ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
-    // print(resp.statusCode);
     return resp.statusCode == 201 ? true : false;
   }
 

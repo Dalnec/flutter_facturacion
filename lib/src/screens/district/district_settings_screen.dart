@@ -6,8 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:facturacion/src/services/services.dart';
 
-class MonitoringSettingsFormScreen extends StatelessWidget {
-  const MonitoringSettingsFormScreen({super.key});
+class DistrictSettingsFormScreen extends StatelessWidget {
+  const DistrictSettingsFormScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class MonitoringSettingsFormScreen extends StatelessWidget {
   }
 }
 
-class _SettingsFormBody extends StatelessWidget {
+class _SettingsFormBody extends StatefulWidget {
   final DistricService districService;
 
   const _SettingsFormBody({
@@ -28,6 +28,11 @@ class _SettingsFormBody extends StatelessWidget {
   });
 
   @override
+  State<_SettingsFormBody> createState() => _SettingsFormBodyState();
+}
+
+class _SettingsFormBodyState extends State<_SettingsFormBody> {
+  @override
   Widget build(BuildContext context) {
     final settingsForm =
         Provider.of<SettingsFormProvider>(context, listen: false);
@@ -35,7 +40,7 @@ class _SettingsFormBody extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Configuracion Monitoreo'),
+          title: const Text('Configuración General'),
         ),
         body: SingleChildScrollView(
             child: Padding(
@@ -56,20 +61,58 @@ class _SettingsFormBody extends StatelessWidget {
                           children: [
                             Text(
                               // 'Datos de Compra:',
-                              'Editar Datos',
+                              'Editar Valores',
                               style: TextStyle(fontSize: 18),
                             ),
                           ],
                         ),
                         const SizedBox(height: 15),
+                        // Switch(
+                        //   activeColor: AppTheme.primary,
+                        //   activeTrackColor: AppTheme.secondary,
+                        //   inactiveThumbColor: Colors.blueGrey.shade600,
+                        //   inactiveTrackColor: Colors.grey.shade400,
+                        //   splashRadius: 20,
+                        //   // boolean variable value
+                        //   value: settings.forceCi ?? false,
+                        //   // changes the state of the switch
+                        //   onChanged: (value) => setState(() {
+                        //     settings.forceCi = value;
+                        //     print(settings.forceCi);
+                        //   }),
+                        // ),
+                        SwitchListTile(
+                          tileColor: AppTheme.harp,
+                          activeColor: AppTheme.primary,
+                          title: const Text(
+                              'Campo Carnet de Identidad Obligatorio:'),
+                          value: settings.forceCi ?? false,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              settings.forceCi = value!;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        SwitchListTile(
+                          tileColor: AppTheme.harp,
+                          activeColor: AppTheme.primary,
+                          title: const Text('Autogenerar Mora:'),
+                          value: settings.autoPenalty ?? false,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              settings.autoPenalty = value!;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 10),
                         CustomInputField(
-                          labelText: 'Intervalo de Envio',
-                          helperText: 'Ingresar Tiempo en minutos',
-                          prefixIcon: Icons.timer_outlined,
-                          formProperty: 'intervalTimeDevice',
-                          initialValue: settings.intervalTimeDevice,
-                          onChanged: (value) =>
-                              settings.intervalTimeDevice = value,
+                          labelText: 'Monto de Mora',
+                          helperText: 'Ingresar Monto de Mora',
+                          prefixIcon: Icons.monetization_on_outlined,
+                          formProperty: 'penaltyAmount',
+                          initialValue: settings.penaltyAmount.toString(),
+                          onChanged: (value) => settings.penaltyAmount = value,
                           length: 1,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(
@@ -77,52 +120,18 @@ class _SettingsFormBody extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        // RadioTimer(),
+                        SwitchListTile(
+                          tileColor: AppTheme.harp,
+                          activeColor: AppTheme.primary,
+                          title: const Text('Cobrar Mes Anterior:'),
+                          value: settings.collectPreviousMonth ?? false,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              settings.collectPreviousMonth = value!;
+                            });
+                          },
+                        ),
                         const SizedBox(height: 10),
-                        CustomInputField(
-                          labelText: 'Altura del Tanque',
-                          helperText: 'Ingresar altura en centimetros',
-                          prefixIcon: Icons.height_outlined,
-                          formProperty: 'height',
-                          initialValue: double.parse(settings.height ?? '0')
-                              .toStringAsFixed(2),
-                          onChanged: (value) => settings.height = value,
-                          length: 1,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^(\d+)?\.?\d{0,2}'))
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        CustomInputField(
-                          labelText: 'Ancho del Tanque',
-                          helperText: 'Ingresar ancho en centimetros',
-                          prefixIcon: Icons.arrow_right_alt_outlined,
-                          formProperty: 'height',
-                          initialValue: double.parse(settings.width ?? '0')
-                              .toStringAsFixed(2),
-                          onChanged: (value) => settings.width = value,
-                          length: 1,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^(\d+)?\.?\d{0,2}'))
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        CustomInputField(
-                          labelText: 'Logitud del Tanque',
-                          helperText: 'Ingresar longitud en centimetros',
-                          prefixIcon: Icons.format_line_spacing_outlined,
-                          formProperty: 'length',
-                          initialValue: double.parse(settings.length ?? '0')
-                              .toStringAsFixed(2),
-                          onChanged: (value) => settings.length = value,
-                          length: 1,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'^(\d+)?\.?\d{0,2}'))
-                          ],
-                        ),
                       ],
                     ),
                   ),
@@ -162,7 +171,7 @@ class _SettingsFormBody extends StatelessWidget {
                                   Navigator.of(context).pop();
                                   await Future.delayed(
                                       const Duration(seconds: 1));
-                                  final resp = await districService
+                                  final resp = await widget.districService
                                       .updateSettings(settings);
                                   settingsForm.setLoading(false);
                                   if (!resp) {

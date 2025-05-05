@@ -24,7 +24,7 @@ class UsuarioDetailDetailService extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
 
   UsuarioDetailDetailService() {
-    getUsuarioDetails('');
+    // getUsuarioDetails('');
   }
 
   Future saveOrCreateUsuarioDetail(UsuarioDetail usuario) async {
@@ -50,6 +50,7 @@ class UsuarioDetailDetailService extends ChangeNotifier {
         'Content-Type': 'application/json',
       },
     );
+    print(resp.body);
     final decodedData = json.decode(resp.body);
     print(decodedData);
     final index = details.indexWhere((element) => element.id == detail.id);

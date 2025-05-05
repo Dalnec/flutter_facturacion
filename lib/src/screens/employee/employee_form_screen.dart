@@ -34,7 +34,7 @@ class _EmployeeFormProviderBody extends StatelessWidget {
     print("employee.id: ${employee.id} - ${employee.ci}");
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Formulario Empleado'),
+          title: const Text('Formulario Encargado'),
         ),
         body: SingleChildScrollView(
             child: Padding(
@@ -53,7 +53,7 @@ class _EmployeeFormProviderBody extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          'Datos Empleado:',
+                          'Datos Encargado:',
                           style: TextStyle(fontSize: 18),
                         ),
                         const SizedBox(height: 5),
@@ -106,7 +106,7 @@ class _EmployeeFormProviderBody extends StatelessWidget {
                         const SizedBox(height: 10),
                         CustomInputField(
                           labelText: 'Correo',
-                          helperText: 'Correo del Empleado',
+                          helperText: 'Correo del Encargado',
                           prefixIcon: Icons.email_outlined,
                           keyboardType: TextInputType.emailAddress,
                           formProperty: 'email',
@@ -190,14 +190,14 @@ class _EmployeeFormProviderBody extends StatelessWidget {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content: Text(
-                                              'Empleado guardado correctamente')),
+                                              'Encargado guardado correctamente')),
                                     );
                                     Navigator.of(context).pop();
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content: Text(
-                                              'Error al guardar el Empleado :(')),
+                                              'Error al guardar el Encargado :(')),
                                     );
                                   }
                                   employeeForm.setLoading(false);

@@ -6,10 +6,12 @@ import 'package:provider/provider.dart';
 
 class FormChangePassword extends StatefulWidget {
   final int? usuarioId;
+  final bool? isEmployee;
 
   const FormChangePassword({
     super.key,
     this.usuarioId,
+    this.isEmployee,
   });
 
   @override
@@ -30,7 +32,8 @@ class _FormChangePasswordState extends State<FormChangePassword> {
       _isLoading = true;
     });
     final bool resp;
-    if (widget.usuarioId.toString().isNotEmpty) {
+    if (widget.isEmployee != true) {
+      print("ingresa a usuario");
       final usuarioService =
           Provider.of<UsuarioService>(context, listen: false);
       final usuario = usuarioService.selectedUsuario;
@@ -39,6 +42,7 @@ class _FormChangePasswordState extends State<FormChangePassword> {
         newPassword,
       );
     } else {
+      print("ingresa a employee");
       final employeeService =
           Provider.of<EmployeeService>(context, listen: false);
       resp = await employeeService.changePassword(

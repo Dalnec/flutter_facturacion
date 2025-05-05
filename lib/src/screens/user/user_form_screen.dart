@@ -32,7 +32,9 @@ class _UserFormProviderBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final usuarioForm = Provider.of<UsuarioFormProvider>(context);
     final usuario = usuarioForm.usuario;
-
+    final districService = Provider.of<DistricService>(context);
+    final settings = districService.settings;
+    print("settings.forceCi: ${settings.forceCi}");
     return Scaffold(
         appBar: AppBar(
           title: const Text('Formulario de Usuario'),
@@ -79,6 +81,7 @@ class _UserFormProviderBody extends StatelessWidget {
                   formProperty: 'code',
                   initialValue: usuario.code,
                   onChanged: (value) => usuario.code = value,
+                  length: 0,
                 ),
                 const SizedBox(height: 10),
                 CustomInputField(
@@ -92,6 +95,7 @@ class _UserFormProviderBody extends StatelessWidget {
                     FilteringTextInputFormatter.allow(
                         RegExp(r'^(\d+)?\.?\d{0,2}'))
                   ],
+                  length: 1,
                 ),
                 const SizedBox(height: 10),
                 Card(
@@ -113,12 +117,12 @@ class _UserFormProviderBody extends StatelessWidget {
                         const SizedBox(height: 5),
                         CustomInputField(
                           labelText: 'Carnet de Identidad',
-                          helperText: 'Ingresar Numero de Carnet de Identidad',
+                          helperText: 'Ingresar Número de Carnet de Identidad',
                           prefixIcon: Icons.contact_emergency_outlined,
                           formProperty: 'ci',
                           initialValue: usuario.ci,
                           onChanged: (value) => usuario.ci = value,
-                          length: 7,
+                          length: settings.forceCi == true ? 7 : 0,
                           keyboardType: TextInputType.number,
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(

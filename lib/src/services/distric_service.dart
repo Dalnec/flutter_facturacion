@@ -71,6 +71,7 @@ class DistricService extends ChangeNotifier {
   }
 
   Future updateSettings(Settings settings) async {
+    print(settings.toJson());
     final url =
         Uri.https(_baseUrl, 'api/distric/${distric.id}/update_settings/');
     /* {'Token': await storage.read(key: 'token')} */

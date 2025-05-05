@@ -67,7 +67,9 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
       _currentPage,
     );
     final newData = invoiceService.invoices;
-
+    for (var e in newData) {
+      print('${e.total} ${e.period} ${e.status} ${e.measured}');
+    }
     if (newData.isEmpty) {
       _hasMoreData = false;
     } else {
@@ -158,7 +160,7 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
                                   if (result != null && result == 'reload') {
                                     setState(() {
                                       print("Datos recargados");
-                                      // _fetchData();
+                                      _fetchData();
                                     });
                                   }
                                 },

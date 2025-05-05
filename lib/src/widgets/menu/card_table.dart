@@ -88,7 +88,7 @@ class CardTable extends StatelessWidget {
       _SingleCard(
         color: AppTheme.secondary,
         icon: Icons.perm_contact_cal_outlined,
-        text: 'Empleados',
+        text: 'Encargados',
         route: 'employee',
       ),
       _SingleCard(

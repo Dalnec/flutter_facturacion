@@ -72,7 +72,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     final employeeService = Provider.of<EmployeeService>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Empleados"),
+        title: const Text("Encargados"),
       ),
       // body: PopScope(
       //   onPopInvokedWithResult: (didPop, result) {
@@ -98,7 +98,7 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                 setState(() {});
                               },
                             ),
-                      hintText: 'Buscar Empleados...',
+                      hintText: 'Buscar Encargados...',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.search),
                         onPressed: () {
@@ -238,9 +238,9 @@ class _UserInfo extends StatelessWidget {
             onPressed: () {
               ModularDialog.showModularDialog(
                 context: context,
-                title: 'Eliminar Empleado',
+                title: 'Cambiar estado Encargado',
                 content: Text(
-                    '¿Esta seguro de ${employee.status == 'A' ? 'Inactivar' : 'Activar'} este Empleado?'),
+                    '¿Esta seguro de ${employee.status == 'A' ? 'Inactivar' : 'Activar'} este Encargado?'),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -377,13 +377,14 @@ class ChangeEmployeePassword extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Empleados"),
+        title: const Text("Encargados"),
       ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: FormChangePassword(
             usuarioId: id,
+            isEmployee: true,
           ),
         ),
       ),

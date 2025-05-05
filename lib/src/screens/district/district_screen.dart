@@ -1,4 +1,5 @@
-import 'package:facturacion/src/models/distric.dart';
+// import 'package:facturacion/src/models/distric.dart';
+import 'package:facturacion/src/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:facturacion/src/themes/theme.dart';
@@ -42,6 +43,23 @@ class _DistricScreenState extends State<DistricScreen> {
               });
             },
           ),
+          IconButton(
+            icon: const Icon(
+              Icons.settings_outlined,
+              color: Colors.white,
+            ),
+            onPressed: () async {
+              final districService =
+                  Provider.of<DistricService>(context, listen: false);
+              await districService.getSettings();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DistrictSettingsFormScreen()),
+              );
+              setState(() {});
+            },
+          )
         ],
       ),
       body: Padding(
