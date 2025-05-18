@@ -392,7 +392,7 @@ class _InvoiceReport extends StatelessWidget {
                     ? null
                     : () async {
                         download(
-                          "https://facturacionapi.tsi.pe/api/invoice/status_report/",
+                          "https://barrioluzapi.tsifactur.com/api/invoice/status_report/",
                           "reporte_facturas_${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}.pdf",
                           filters,
                         );
@@ -446,12 +446,17 @@ class _UsuariosReport extends StatelessWidget {
                   ? null
                   : () async {
                       // final Uri url = Uri.parse(
-                      //     "http://facturacionapi.tsi.pe/api/usuario/report/");
+                      //     "http://barrioluzapi.tsifactur.com/api/usuario/report/");
                       // if (!await launchUrl(url)) {
                       //   throw Exception('Could not launch $url');
                       // }
+                      // download(
+                      //   "http://barrioluzapi.tsifactur.com/api/usuario/report/",
+                      //   "reporte_usuarios_${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}.pdf",
+                      //   null,
+                      // );
                       download(
-                        "http://facturacionapi.tsi.pe/api/usuario/report/",
+                        "https://barrioluzapi.tsifactur.com/api/usuario/report/",
                         "reporte_usuarios_${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}.pdf",
                         null,
                       );

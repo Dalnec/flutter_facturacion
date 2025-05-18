@@ -13,10 +13,10 @@ import 'package:facturacion/src/providers/bottom_navigation_bar_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // await FlutterDownloader.initialize(
-  //   debug: true,
-  //   ignoreSsl: true,
-  // );
+  await FlutterDownloader.initialize(
+    debug: true,
+    ignoreSsl: true,
+  );
 
   runApp(const AppState());
 }
