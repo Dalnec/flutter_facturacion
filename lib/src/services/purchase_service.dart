@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class PurchaseService extends ChangeNotifier {
-  final String _baseUrl = 'facturacionapi.tsi.pe';
+  final String _baseUrl = 'barrioluzapi.tsifactur.com';
   // final String _baseUrl = 'localhost:8000';
 
   List<Purchase> purchases = [];

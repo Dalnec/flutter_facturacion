@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class InvoiceService extends ChangeNotifier {
-  final String _baseUrl = 'facturacionapi.tsi.pe';
+  final String _baseUrl = 'barrioluzapi.tsifactur.com';
   // final String _baseUrl = 'localhost:8000';
 
   InvoiceResponse response = InvoiceResponse(count: 0, results: []);
@@ -39,11 +39,13 @@ class InvoiceService extends ChangeNotifier {
     // final url = Uri.https(_baseUrl, 'Invoice/${Invoice.id}',
     final url = Uri.https(_baseUrl, 'api/invoice/${invoice.id}/');
     /* {'Token': await storage.read(key: 'token')} */
+    final token = await storage.read(key: 'token');
     final resp = await http.put(
       url,
       body: invoice.toRawJson(),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Token ${token ?? ''}',
       },
     );
 
