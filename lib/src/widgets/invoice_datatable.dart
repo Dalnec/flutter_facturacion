@@ -159,9 +159,12 @@ class _InvoiceDataTableState extends State<InvoiceDataTable> {
                                   );
                                   if (result != null && result == 'reload') {
                                     setState(() {
-                                      print("Datos recargados");
-                                      _fetchData();
+                                      // print("Datos recargados");
+                                      // _fetchData();
+                                      _data.clear();
+                                      _currentPage = 1;
                                     });
+                                    await _fetchData();
                                   }
                                 },
                                 cells: [
